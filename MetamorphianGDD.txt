@@ -1,0 +1,61 @@
+Game Design Document
+
+Title: Metamorphian
+Genre: Fixed Shooter
+Similar Games: Bosconian, Centipede, Galaxian
+
+Mechanics:
+    
+    Player cannon: The player is a gun much like Centipede and can
+    move around the bottom of the screen to fire bullets.
+    
+    Leave Vines: Provide walls to stop enemies, but leaf sections
+    are vulnerable to being eaten thus letting in enemies. There are
+    3 wall segments to start
+    
+    Acorns: Rare special items that give the player limited bullets
+    with different abilities
+        red: gives the player 2 maggot bullets 
+        blue: gives the player a vine grower bullet 
+    
+    Larva: Emerge from the top of the screen where they eat leaves. 
+    When a certain amount of leaves have been eaten, the larva becomes
+    a cacoon. 
+    
+    Cocoon: Is stagnant, but can absorb bullet fire. Larva will build
+    cocoons in wall formations to protect larva. Vulnerable to maggot
+    larva.
+    
+    Butterfly: Can fly over anything and lay eggs, but also directly
+    attacks the player with bullers. After a butterfly is shot, it's 
+    body shoots eggs around it. A normal bullet can destroy the body, 
+    but a maggot bullet infects the body of the butterfly.
+    
+    Bullets:
+        normal: kills eggs, larva, and butterflys
+        maggot egg: if shot into a dead butterfly it will hatch from
+        the body and create Maggot larva.
+        vine grower: creates a vine wall wherever it stops.
+    
+    Maggot Larva: Eat cocoons to be becomal Larval coccoon. Vulnerable
+    to regular larva
+    
+    Maggot Cocoon: Weak to regular larva. They must be protected if
+    possible.
+    
+    Flys: You did it you created a fly. Can only be killed by
+    a Butterfly bullet. Flys can eat eggs, larva, and cocoons, but 
+    can't hurt butterflys.
+    
+    Stage Clearing: When a stage is cleared of all enemies, the 3 main
+    walls are regrown and more larva spawn.
+    
+
+Controls:
+    Move: WASD.
+    Fire Bullet: O
+    Swich bullet (if avaiable): P
+
+
+Aesthetics:
+    The art will be pixel graphics.
