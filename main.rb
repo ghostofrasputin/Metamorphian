@@ -22,19 +22,29 @@ class Main < Gosu::Window
     self.caption = "Metamorphian"
     @player = Player.new(200, 600)
     @bullets = []
+    @bulletPause = 0.0
   end
   
   def update
+    frameCount = Gosu.milliseconds/100
     # fire bullet:
-    if Gosu.button_down? Gosu::char_to_button_id('O')
-      @bullets << Bullet.new(@player.getX,@player.getY)
+    if Gosu.button_down? Gosu::char_to_button_id('O') and frameCount > @bulletPause+1 
+      @bullets << Bullet.new(@player.x,@player.y)
+      @bulletPause = frameCount
     end
-    @bullets.each{|x| x.update}
+    @bullets.each{|b| b.update}
+    # clean up bullets that go offscreen:
+    @bullets.each do |b|
+      if b.y < 0
+        @bullets.delete(b)
+      end
+    end
+    
     @player.update
   end
   
   def draw
-    @bullets.each{|x| x.draw} 
+    @bullets.each{|b| b.draw} 
     @player.draw
   end
   

@@ -4,6 +4,8 @@
 
 class Bullet
   
+  attr_reader :x, :y
+  
   def initialize(x,y)
     @image = Gosu::Image.new("graphics/starfighter.bmp")
     @x=x
