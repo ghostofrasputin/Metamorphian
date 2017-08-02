@@ -4,21 +4,30 @@
 
 class Caterpillar
   
-  attr_reader :x, :y, :w, :h, :food, :speed
+  attr_reader :x, :y, :w, :h, :food, :speed, :alive
   
-  def initialize(x,y,food)
+  def initialize(x,y,food,cocoons)
     @image = Gosu::Image.new("graphics/caterpillar.png")
-    @x = rand(x..x+100)
-    @y = rand(y..y+100)
+    @x = x
+    @y = y
     @w = @image.width
     @h = @image.height
-    @speed = 0.5
+    @speed = 1
     @food = food
+    @cocoons = cocoons
     @distance = Float::INFINITY 
     @goal_food = nil
+    @food_count = 0.0
+    @alive = true
   end
   
   def update
+    
+    if @food_count == 2
+      @alive = false
+      @cocoons << Cocoon.new(x,y)
+    end
+    
     food.each do |f|
       fx = f.x
       fy = f.y
@@ -46,8 +55,9 @@ class Caterpillar
       end
       
       # caterpillar food collision
-      if Collision.rect_collision([x,y,w,h],[@goal_food.x,@goal_food.y,@goal_food.w,@goal_food.h])
+      if rect_collision([x,y,w,h],[@goal_food.x,@goal_food.y,@goal_food.w,@goal_food.h])
         food.delete(@goal_food)
+        @food_count+=1
       end
     end  
   
