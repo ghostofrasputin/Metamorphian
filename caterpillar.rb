@@ -4,12 +4,14 @@
 
 class Caterpillar
   
-  attr_reader :x, :y, :food, :speed
+  attr_reader :x, :y, :w, :h, :food, :speed
   
   def initialize(x,y,food)
     @image = Gosu::Image.new("graphics/caterpillar.png")
     @x = rand(x..x+100)
     @y = rand(y..y+100)
+    @w = @image.width
+    @h = @image.height
     @speed = 0.5
     @food = food
     @distance = Float::INFINITY 
@@ -42,13 +44,13 @@ class Caterpillar
       if @goal_food.y < y
         @y -= speed
       end
+      
+      # caterpillar food collision
+      if Collision.rect_collision([x,y,w,h],[@goal_food.x,@goal_food.y,@goal_food.w,@goal_food.h])
+        food.delete(@goal_food)
+      end
     end  
-    
-    # caterpillar food collision
-    if Collision.rect_collision([x,y,@image.width,@image.height],[@goal_food.x,@goal_food.y,5,5])
-      food.delete(@goal_food)
-    end
-    
+  
   end
   
   def draw
