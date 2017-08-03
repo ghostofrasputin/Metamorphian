@@ -30,7 +30,7 @@ class Bullet
   end
   
   def draw
-    @image.draw_rot(x, y, 1.0, angle)
+    @image.draw_rot(x, y, ZOrder::BULLETS, angle)
   end
   
 end  

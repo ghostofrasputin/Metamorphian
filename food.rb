@@ -3,14 +3,16 @@
 #---------------------------------------------------------------------
 
 class Food
-  attr_reader :x, :y, :w, :h
+  attr_reader :x, :y, :z, :w, :h
   
   def initialize(x,y)
     @image = Gosu::Image.new("graphics/food.png")
     @x = x
     @y = y
+    @z =  ZOrder::FOOD
     @w = @image.width
     @h = @image.height
+    @animation = animation
   end
   
   
@@ -18,7 +20,7 @@ class Food
   end
   
   def draw
-    @image.draw(x, y, 1.0)
+    @image.draw(x, y, ZOrder::FOOD)
   end
   
 end

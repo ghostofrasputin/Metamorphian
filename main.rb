@@ -17,30 +17,40 @@
 $width = 600
 $height = 800
 
-#-------------------------------------------------------------------
+#---------------------------------------------------------------------
 # Collision Detection Functions
-#-------------------------------------------------------------------
+#---------------------------------------------------------------------
   
   # collision detection for 2 rectangles
   def rect_collision(rect1, rect2)
     # rect 1
-    minX = rect1[0];
-    maxX = rect1[0] + rect1[2];
-    minY = rect1[1];
-    maxY = rect1[1] + rect1[3];
+    minX = rect1[0]
+    maxX = rect1[0] + rect1[2]
+    minY = rect1[1]
+    maxY = rect1[1] + rect1[3]
     # rect 2
-    minX2 = rect2[0];
-    maxX2 = rect2[0] + rect2[2];
-    minY2 = rect2[1];
-    maxY2 = rect2[1] + rect2[3];
+    minX2 = rect2[0]
+    maxX2 = rect2[0] + rect2[2]
+    minY2 = rect2[1]
+    maxY2 = rect2[1] + rect2[3]
     # return the result
     minX < maxX2 && maxX > minX2 && minY < maxY2 && maxY > minY2
   end
 
 #---------------------------------------------------------------------
+# Module
+#   specifies in which order objects are drawn
+#---------------------------------------------------------------------  
+  
+module ZOrder
+  BACKGROUND, FOOD, PLAYER, ENEMY, BULLETS, UI = *0..5
+end  
+  
+#---------------------------------------------------------------------
 # Import libraries and classes
 #---------------------------------------------------------------------
 require 'gosu'
+require_relative 'animation'
 require_relative 'player'
 require_relative 'bullet'
 require_relative 'food'
@@ -53,7 +63,7 @@ require_relative 'dragonfly'
 
 #---------------------------------------------------------------------
 # Main class 
-#   all game logic and drawing is done here
+#   all game logic and drawing is done within this class
 #---------------------------------------------------------------------
 class Main < Gosu::Window
   
@@ -73,9 +83,13 @@ class Main < Gosu::Window
     @dragonflies = []
     @bulletPause = 0.0
     @spawner = Spawner.new
+    
+    # LOAD ANIMATIONS:
+    #@star_anim = Animation.new("graphics/star.png", 25, 25)
+    
     # generate food randomly for now
     for i in 0..100
-      food << Food.new(rand($width),rand($height))
+      food << Food.new(rand($width),rand(50..$height))
     end
   end
   
@@ -85,11 +99,13 @@ class Main < Gosu::Window
     spawner.update(caterpillars, food, cocoons)
     caterpillars.each{|c| c.alive ? c.update : caterpillars.delete(c)}
     cocoons.each{|c| c.update}
+    
     # fire bullet
     if Gosu.button_down? Gosu::char_to_button_id('O') and frameCount > @bulletPause+1.0 
       bullets << Bullet.new(player.x,player.y, 10.0, "north")
       @bulletPause = frameCount
     end
+    
     bullets.each{|b| b.update}
     player.update
     

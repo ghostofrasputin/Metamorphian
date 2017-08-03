@@ -31,7 +31,7 @@ class Caterpillar
     food.each do |f|
       fx = f.x
       fy = f.y
-      temp_dist = Math.sqrt((fx-x)**2+(fy-y)**2)
+      temp_dist = ((fx-x)**2.0+(fy-y)**2.0)**(0.5)
       if temp_dist < @distance 
         @distance = temp_dist
         @goal_food = f  
@@ -64,7 +64,7 @@ class Caterpillar
   end
   
   def draw
-    @image.draw_rot(x, y, 1.0, 0.0)
+    @image.draw_rot(x, y, ZOrder::ENEMY, 0.0)
   end
   
   def transform

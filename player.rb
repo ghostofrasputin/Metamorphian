@@ -27,10 +27,11 @@ class Player
     if Gosu.button_down? Gosu::char_to_button_id('S') and y <= $height
       @y+= speed
     end
+    @x = x % $width
   end
   
   def draw
-    @image.draw_rot(x, y, 1.0, 0.0)
+    @image.draw_rot(x, y, ZOrder::PLAYER, 0.0)
   end
     
 end        
