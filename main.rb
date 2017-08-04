@@ -12,10 +12,17 @@
 #--------------------------------------------------------------------#
 
 #---------------------------------------------------------------------
-# Global variables
+# Global variables and data structures
 #---------------------------------------------------------------------
 $width = 600
 $height = 800
+$food = []
+$bullets = []
+$caterpillars = []
+$cocoons = []
+$butterflies = []
+$nymphs = []
+$dragonflies = []
 
 #---------------------------------------------------------------------
 # Collision Detection Functions
@@ -43,7 +50,13 @@ $height = 800
 #---------------------------------------------------------------------  
   
 module ZOrder
-  BACKGROUND, FOOD, PLAYER, ENEMY, BULLETS, UI = *0..5
+  BACKGROUND = 0
+  FOOD =       1
+  PLAYER =     2
+  ENEMY =      3
+  BUTTERFLY =  4
+  BULLETS =    5
+  UI =         6
 end  
   
 #---------------------------------------------------------------------
@@ -74,13 +87,6 @@ class Main < Gosu::Window
     super $width, $height #, :fullscreen => true
     self.caption = "Metamorphian"
     @player = Player.new(290, 700)
-    @bullets = []
-    @food = []
-    @caterpillars = []
-    @cocoons = []
-    @butterflies = []
-    @nymphs = []
-    @dragonflies = []
     @bulletPause = 0.0
     @spawner = Spawner.new
     
@@ -89,56 +95,64 @@ class Main < Gosu::Window
     
     # generate food randomly for now
     for i in 0..100
-      food << Food.new(rand($width),rand(50..$height))
+      $food << Food.new(rand($width),rand(50..$height))
     end
   end
   
   def update
     
     frameCount = Gosu.milliseconds/100
-    spawner.update(caterpillars, food, cocoons)
-    caterpillars.each{|c| c.alive ? c.update : caterpillars.delete(c)}
-    cocoons.each{|c| c.update}
+    spawner.update
+    $caterpillars.each{|c| c.alive ? c.update : $caterpillars.delete(c)}
+    $cocoons.each{|c| c.alive ? c.update : $cocoons.delete(c)}
+    $butterflies.each{|b| b.alive ? b.update : $butterflies.delete(b)}
     
     # fire bullet
     if Gosu.button_down? Gosu::char_to_button_id('O') and frameCount > @bulletPause+1.0 
-      bullets << Bullet.new(player.x,player.y, 10.0, "north")
+      $bullets << Bullet.new(player.x,player.y, 10.0, "north")
       @bulletPause = frameCount
     end
     
-    bullets.each{|b| b.update}
+    $bullets.each{|b| b.update}
     player.update
     
     # Collision Logic:
     
     # player bullets collision
-    bullets.each do |b|
+    $bullets.each do |b|
       # clean up bullets that go off screen
       if b.y < 0
-        bullets.delete(b)
+        $bullets.delete(b)
       end
       # collision with caterpillars
-      caterpillars.each do |c|
+      $caterpillars.each do |c|
         if rect_collision([b.x,b.y,b.w,b.h],[c.x,c.y,c.w,c.h])
-          caterpillars.delete(c)
-          bullets.delete(b)
+          $caterpillars.delete(c)
+          $bullets.delete(b)
         end
       end
       # collision with nymphs
       # collision with cocoons
-      cocoons.each do |c|
+      $cocoons.each do |c|
         if rect_collision([b.x,b.y,b.w,b.h],[c.x,c.y,c.w,c.h])
-          # cocoons absorb fire, staying intact while destroying the
-          # bullet
-          bullets.delete(b)
+          # cocoons take 5 hits to die
+          c.hits += 1
+          $bullets.delete(b)
         end
       end
       # collision with butterflys
+      $butterflies.each do |bu|
+        if rect_collision([b.x,b.y,b.w,b.h],[bu.x,bu.y,bu.w,bu.h])
+          # cocoons take 5 hits to die
+          bu.hits += 1
+          $bullets.delete(b)
+        end
+      end  
       # collision with dragonflies
     end
     
     # cocoon bullets with player
-    cocoons.each do |c|
+    $cocoons.each do |c|
       c.bullets do |b|
         if rect_collision([b.x,b.y,b.w,b.h],[player.x,player.y,player.w,player.h])
           puts "player was shot"
@@ -149,10 +163,11 @@ class Main < Gosu::Window
   end
   
   def draw
-    food.each{|f| f.draw}
-    caterpillars.each{|c| c.draw}
-    cocoons.each{|c| c.draw}
-    bullets.each{|b| b.draw} 
+    $food.each{|f| f.draw}
+    $caterpillars.each{|c| c.draw}
+    $cocoons.each{|c| c.draw}
+    $butterflies.each{|b| b.draw}
+    $bullets.each{|b| b.draw} 
     player.draw
   end
   

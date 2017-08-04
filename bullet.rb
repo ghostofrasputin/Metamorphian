@@ -8,7 +8,7 @@ class Bullet
   attr_accessor :x, :y, :w, :h, :angle
   
   def initialize(x,y,speed,dir)
-    @image = Gosu::Image.new("graphics/bullet.png")
+    @image = Gosu::Image.new("sprites/bullet.png")
     @x = x
     @y = y
     @w = @image.width

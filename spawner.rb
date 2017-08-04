@@ -15,11 +15,11 @@ class Spawner
     @delay = 10
   end
   
-  def update(caterpillars, food, cocoons)
+  def update
     frameCount = Gosu.milliseconds/100
     if @caterpillar_limit <= 10
       if frameCount > @caterpillar_spawn_time+delay
-        caterpillars << Caterpillar.new(rand(x..$width),y,food,cocoons)
+        $caterpillars << Caterpillar.new(rand(x..$width),y)
         @caterpillar_limit += 1
         @caterpillar_spawn_time = frameCount
       end

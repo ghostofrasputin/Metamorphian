@@ -6,16 +6,14 @@ class Food
   attr_reader :x, :y, :z, :w, :h
   
   def initialize(x,y)
-    @image = Gosu::Image.new("graphics/food.png")
+    @image = Gosu::Image.new("sprites/food.png")
     @x = x
     @y = y
     @z =  ZOrder::FOOD
     @w = @image.width
     @h = @image.height
-    @animation = animation
   end
-  
-  
+   
   def update
   end
   

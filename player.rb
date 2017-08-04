@@ -7,7 +7,7 @@ class Player
   attr_reader :x, :y, :speed
   
   def initialize(x, y)
-    @image = Gosu::Image.new("graphics/starfighter.bmp")
+    @image = Gosu::Image.new("sprites/starfighter.bmp")
     @x = x
     @y = y
     @speed = 3.0
