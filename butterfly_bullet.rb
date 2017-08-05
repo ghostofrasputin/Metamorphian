@@ -4,7 +4,7 @@
 
 class ButterflyBullet
   
-  attr_reader :x, :y, :w, :y, :r, :theta, :stage1, :stage2, :speed
+  attr_reader :x, :y, :w, :h, :r, :theta, :stage1, :stage2, :speed
   
   def initialize(x,y)
     @image = Gosu::Image.new("sprites/bullet.png")

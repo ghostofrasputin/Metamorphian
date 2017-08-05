@@ -16,9 +16,8 @@
 #---------------------------------------------------------------------
 require 'gosu'
 require_relative 'animation'
-require_relative 'bullet_hell'
 require_relative 'player'
-require_relative 'bullet'
+require_relative 'bullet_hell'
 require_relative 'food'
 require_relative 'spawner'
 require_relative 'caterpillar'
@@ -34,6 +33,8 @@ $width = 800
 $height = 800
 $food = []
 $bullets = []
+$cocoon_bullets = []
+$butterfly_bullets = []
 $caterpillars = []
 $cocoons = []
 $butterflies = []
@@ -84,15 +85,14 @@ end
 
 class Main < Gosu::Window
   
-  attr_reader :player, :spawner, :bullets, :food, :nymphs, 
-              :caterpillars, :cocoons, :butterflies, :dragonflies
+  attr_reader :spawner, :bullet_hell
   
   def initialize
     super $width, $height #, :fullscreen => true
     self.caption = "Metamorphian"
-    @bullet_pause = 0.0
+    #@bullet_pause = 0.0
     @spawner = Spawner.new
-    
+    @bullet_hell = BulletHell.new
     # LOAD ANIMATIONS:
     #@star_anim = Animation.new("graphics/star.png", 25, 25)
     
@@ -104,24 +104,25 @@ class Main < Gosu::Window
   
   def update
     
-    frameCount = Gosu.milliseconds/100
+    #frameCount = Gosu.milliseconds/100
     spawner.update
     $caterpillars.each{|c| c.alive ? c.update : $caterpillars.delete(c)}
     $cocoons.each{|c| c.alive ? c.update : $cocoons.delete(c)}
     $butterflies.each{|b| b.alive ? b.update : $butterflies.delete(b)}
     
-    # fire bullet
-    if Gosu.button_down? Gosu::char_to_button_id('O') and frameCount > @bullet_pause+1.0 
-      $bullets << Bullet.new($player.x,$player.y, 10.0, -90)
-      @bullet_pause = frameCount
+    # fire bullet when O button is pressed
+    if Gosu.button_down? Gosu::char_to_button_id('O')
+      bullet_hell.line($bullets, [$player.x,$player.y], 10.0, -90, 2.0, Gosu.milliseconds/100)
     end
     
     $bullets.each{|b| b.update}
+    $cocoon_bullets.each{|cb| cb.update}
+    $butterfly_bullets.each{|bb| bb.update}
     $player.update
     
     # Collision Logic:
     
-    # player bullets collision
+    # PLAYER BULLET COLLISION
     $bullets.each do |b|
       # clean up bullets that go off screen
       if b.y < 0
@@ -154,14 +155,24 @@ class Main < Gosu::Window
       # collision with dragonflies
     end
     
+    # ENEMY BULLET COLLISION
+    player_collision_info = [$player.x,$player.y,$player.w,$player.h]
+    
     # cocoon bullets with player
-    $cocoons.each do |c|
-      c.bullets do |b|
-        if rect_collision([b.x,b.y,b.w,b.h],[$player.x,$player.y,$player.w,$player.h])
-          puts "player was shot"
-        end
+    $cocoon_bullets.each do |cb|
+      if rect_collision([cb.x,cb.y,cb.w,cb.h],player_collision_info)
+        puts "player was shot by cocoon"
       end
     end
+    
+    # butterfly bullets with player
+    $butterfly_bullets.each do |cb|
+      if rect_collision([cb.x,cb.y,cb.w,cb.h],player_collision_info)
+        puts "player was shot by butterfly"
+      end
+    end
+    
+    # dragonfly bullets with player
     
   end
   
@@ -169,7 +180,9 @@ class Main < Gosu::Window
     $food.each{|f| f.draw}
     $caterpillars.each{|c| c.draw}
     $cocoons.each{|c| c.draw}
+    $cocoon_bullets.each{|cb| cb.draw}
     $butterflies.each{|b| b.draw}
+    $butterfly_bullets.each{|bb| bb.draw}
     $bullets.each{|b| b.draw} 
     $player.draw
   end

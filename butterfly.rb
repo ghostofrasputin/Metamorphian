@@ -33,7 +33,7 @@ class Butterfly
     # fire bullet
     if frameCount > @bullet_pause+delay
       if bullets.length <= 5
-        #bullets << ButterflyBullet.new(x,y)
+        $butterfly_bullets << ButterflyBullet.new(x,y)
         @bullet_pause = frameCount
       end
     end

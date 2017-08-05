@@ -4,7 +4,7 @@
 
 class Cocoon
   
-  attr_reader :x, :y, :w, :h, :bullets, :delay, :timer
+  attr_reader :x, :y, :w, :h, :delay, :timer, :bullet_hell
   attr_accessor :alive, :hits
   
   def initialize(x,y)
@@ -13,12 +13,14 @@ class Cocoon
     @y = y
     @w = @image.width
     @h = @image.height
-    @bullets = []
     @bullet_pause = 0.0
     @delay = 15.0
     @timer = 0.0
     @hits = 0.0
     @alive = true
+    
+    @bullet_hell = BulletHell.new
+    
   end
   
   def update
@@ -35,22 +37,22 @@ class Cocoon
       @alive = false
     end
     
-    # fire bullet
+    # fire bullet at player
+    bullet_hell.at_player($cocoon_bullets,[x,y],3.0,0.0,15.0,frameCount)
+    
     if frameCount > @bullet_pause+delay
-      delta_x = $player.x - x
-      delta_y = $player.y - y
-      angle = Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
-      bullets << Bullet.new(x,y,3.0,angle)
+      #delta_x = $player.x - x
+      #delta_y = $player.y - y
+      #angle = Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
+      #$cocoon_bullets << Bullet.new(x,y,3.0,angle)
       @bullet_pause = frameCount
       @timer += 1
     end
     
-    bullets.each{|b| b.update}
   end
   
   def draw
     @image.draw_rot(x,y,ZOrder::ENEMY,1.0)
-    bullets.each{|b| b.draw}
   end
   
 end
