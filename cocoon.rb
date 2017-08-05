@@ -14,7 +14,7 @@ class Cocoon
     @w = @image.width
     @h = @image.height
     @bullets = []
-    @bulletPause = 0.0
+    @bullet_pause = 0.0
     @delay = 15.0
     @timer = 0.0
     @hits = 0.0
@@ -36,9 +36,12 @@ class Cocoon
     end
     
     # fire bullet
-    if frameCount > @bulletPause+delay
-      bullets << Bullet.new(x,y,3.0,"south")
-      @bulletPause = frameCount
+    if frameCount > @bullet_pause+delay
+      delta_x = $player.x - x
+      delta_y = $player.y - y
+      angle = Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
+      bullets << Bullet.new(x,y,3.0,angle)
+      @bullet_pause = frameCount
       @timer += 1
     end
     

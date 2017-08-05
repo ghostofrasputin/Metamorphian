@@ -4,29 +4,21 @@
 
 class Bullet
   
-  attr_reader :speed, :angle_speed, :dir
-  attr_accessor :x, :y, :w, :h, :angle
+  attr_reader :x, :y, :w, :h, :angle, :speed
   
-  def initialize(x,y,speed,dir)
+  def initialize(x, y, speed, angle)
     @image = Gosu::Image.new("sprites/bullet.png")
     @x = x
     @y = y
     @w = @image.width
     @h = @image.height
     @speed = speed
-    @angle = 0.0
-    @angle_speed = 7.0
-    @dir = dir
-    @bullet_type = "normal"
+    @angle = angle
   end  
     
   def update
-    if dir=="north"
-      @y -= speed
-      @angle += angle_speed
-    elsif dir == "south"
-      @y += speed
-    end  
+    @x += Math.cos(Gosu.degrees_to_radians(angle))*speed
+    @y += Math.sin(Gosu.degrees_to_radians(angle))*speed
   end
   
   def draw

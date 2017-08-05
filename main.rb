@@ -12,9 +12,25 @@
 #--------------------------------------------------------------------#
 
 #---------------------------------------------------------------------
+# Import libraries and classes
+#---------------------------------------------------------------------
+require 'gosu'
+require_relative 'animation'
+require_relative 'bullet_hell'
+require_relative 'player'
+require_relative 'bullet'
+require_relative 'food'
+require_relative 'spawner'
+require_relative 'caterpillar'
+require_relative 'nymph'
+require_relative 'cocoon'
+require_relative 'butterfly'
+require_relative 'dragonfly'
+
+#---------------------------------------------------------------------
 # Global variables and data structures
 #---------------------------------------------------------------------
-$width = 600
+$width = 800
 $height = 800
 $food = []
 $bullets = []
@@ -23,6 +39,7 @@ $cocoons = []
 $butterflies = []
 $nymphs = []
 $dragonflies = []
+$player = Player.new(290, 700)
 
 #---------------------------------------------------------------------
 # Collision Detection Functions
@@ -58,26 +75,13 @@ module ZOrder
   BULLETS =    5
   UI =         6
 end  
-  
-#---------------------------------------------------------------------
-# Import libraries and classes
-#---------------------------------------------------------------------
-require 'gosu'
-require_relative 'animation'
-require_relative 'player'
-require_relative 'bullet'
-require_relative 'food'
-require_relative 'spawner'
-require_relative 'caterpillar'
-require_relative 'nymph'
-require_relative 'cocoon'
-require_relative 'butterfly'
-require_relative 'dragonfly'
 
 #---------------------------------------------------------------------
 # Main class 
 #   all game logic and drawing is done within this class
 #---------------------------------------------------------------------
+
+
 class Main < Gosu::Window
   
   attr_reader :player, :spawner, :bullets, :food, :nymphs, 
@@ -86,8 +90,7 @@ class Main < Gosu::Window
   def initialize
     super $width, $height #, :fullscreen => true
     self.caption = "Metamorphian"
-    @player = Player.new(290, 700)
-    @bulletPause = 0.0
+    @bullet_pause = 0.0
     @spawner = Spawner.new
     
     # LOAD ANIMATIONS:
@@ -108,13 +111,13 @@ class Main < Gosu::Window
     $butterflies.each{|b| b.alive ? b.update : $butterflies.delete(b)}
     
     # fire bullet
-    if Gosu.button_down? Gosu::char_to_button_id('O') and frameCount > @bulletPause+1.0 
-      $bullets << Bullet.new(player.x,player.y, 10.0, "north")
-      @bulletPause = frameCount
+    if Gosu.button_down? Gosu::char_to_button_id('O') and frameCount > @bullet_pause+1.0 
+      $bullets << Bullet.new($player.x,$player.y, 10.0, -90)
+      @bullet_pause = frameCount
     end
     
     $bullets.each{|b| b.update}
-    player.update
+    $player.update
     
     # Collision Logic:
     
@@ -154,7 +157,7 @@ class Main < Gosu::Window
     # cocoon bullets with player
     $cocoons.each do |c|
       c.bullets do |b|
-        if rect_collision([b.x,b.y,b.w,b.h],[player.x,player.y,player.w,player.h])
+        if rect_collision([b.x,b.y,b.w,b.h],[$player.x,$player.y,$player.w,$player.h])
           puts "player was shot"
         end
       end
@@ -168,7 +171,7 @@ class Main < Gosu::Window
     $cocoons.each{|c| c.draw}
     $butterflies.each{|b| b.draw}
     $bullets.each{|b| b.draw} 
-    player.draw
+    $player.draw
   end
   
   #-------------------------------------------------------------------

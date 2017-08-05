@@ -18,7 +18,7 @@ class Food
   end
   
   def draw
-    @image.draw(x, y, ZOrder::FOOD)
+    @image.draw_rot(x, y, ZOrder::FOOD, 0.0)
   end
   
 end
