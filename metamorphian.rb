@@ -15,16 +15,17 @@
 # Import libraries and classes
 #---------------------------------------------------------------------
 require 'gosu'
-require_relative 'animation'
-require_relative 'player'
-require_relative 'bullet_hell'
-require_relative 'food'
-require_relative 'spawner'
-require_relative 'caterpillar'
-require_relative 'nymph'
-require_relative 'cocoon'
-require_relative 'butterfly'
-require_relative 'dragonfly'
+require_relative 'lib\animation'
+require_relative 'lib\sound_manager'
+require_relative 'lib\bullet_emitter'
+require_relative 'lib\player'
+require_relative 'lib\food'
+require_relative 'lib\spawner'
+require_relative 'lib\caterpillar'
+require_relative 'lib\nymph'
+require_relative 'lib\cocoon'
+require_relative 'lib\butterfly'
+require_relative 'lib\dragonfly'
 
 #---------------------------------------------------------------------
 # Global variables and data structures
@@ -39,8 +40,11 @@ $caterpillars = []
 $cocoons = []
 $butterflies = []
 $nymphs = []
+$nymph_bullets = []
 $dragonflies = []
+$dragonfly_bullets = []
 $player = Player.new(290, 700)
+$sm = SoundManager.new
 
 #---------------------------------------------------------------------
 # Collision Detection Functions
@@ -83,18 +87,18 @@ end
 #---------------------------------------------------------------------
 
 
-class Main < Gosu::Window
+class Metamorphian < Gosu::Window
   
   attr_reader :spawner, :bullet_hell
   
   def initialize
     super $width, $height #, :fullscreen => true
     self.caption = "Metamorphian"
-    #@bullet_pause = 0.0
     @spawner = Spawner.new
-    @bullet_hell = BulletHell.new
+    $sm.play_sound("everglades", 0.6, 1.5, true)
+    $sm.play_sound("synth_melody", 0.5, 1.0, true)
     # LOAD ANIMATIONS:
-    #@star_anim = Animation.new("graphics/star.png", 25, 25)
+    
     
     # generate food randomly for now
     for i in 0..100
@@ -104,44 +108,55 @@ class Main < Gosu::Window
   
   def update
     
-    #frameCount = Gosu.milliseconds/100
+    $player.update
     spawner.update
-    $caterpillars.each{|c| c.alive ? c.update : $caterpillars.delete(c)}
-    $cocoons.each{|c| c.alive ? c.update : $cocoons.delete(c)}
-    $butterflies.each{|b| b.alive ? b.update : $butterflies.delete(b)}
     
-    # fire bullet when O button is pressed
-    if Gosu.button_down? Gosu::char_to_button_id('O')
-      bullet_hell.line($bullets, [$player.x,$player.y], 10.0, -90, 2.0, Gosu.milliseconds/100)
+    $caterpillars.delete_if do |c|
+      if c.dead
+        true
+      else
+        c.update
+        false
+      end
     end
     
-    $bullets.each{|b| b.update}
-    $cocoon_bullets.each{|cb| cb.update}
-    $butterfly_bullets.each{|bb| bb.update}
-    $player.update
-    
-    # Collision Logic:
-    
-    # PLAYER BULLET COLLISION
-    $bullets.each do |b|
-      # clean up bullets that go off screen
-      if b.y < 0
-        $bullets.delete(b)
+    $cocoons.delete_if do |c|
+      if c.dead
+        true
+      else
+        c.update
+        false
       end
+    end
+    
+    $butterflies.delete_if do |b|
+      if b.dead
+        true
+      else
+        b.update
+        false
+      end
+    end  
+    
+    $bullets.delete_if do |b|
+      flag = false
+      
       # collision with caterpillars
       $caterpillars.each do |c|
         if rect_collision([b.x,b.y,b.w,b.h],[c.x,c.y,c.w,c.h])
-          $caterpillars.delete(c)
-          $bullets.delete(b)
+          c.dead = true
+          flag = true
         end
       end
       # collision with nymphs
+      $nymphs.each do |n|
+      end
       # collision with cocoons
       $cocoons.each do |c|
         if rect_collision([b.x,b.y,b.w,b.h],[c.x,c.y,c.w,c.h])
           # cocoons take 5 hits to die
           c.hits += 1
-          $bullets.delete(b)
+          flag = true
         end
       end
       # collision with butterflys
@@ -149,30 +164,54 @@ class Main < Gosu::Window
         if rect_collision([b.x,b.y,b.w,b.h],[bu.x,bu.y,bu.w,bu.h])
           # cocoons take 5 hits to die
           bu.hits += 1
-          $bullets.delete(b)
+          flag = true
         end
       end  
       # collision with dragonflies
+      $dragonflies.each do |d|
+      end
+      
+      # clean up bullets that go off screen order
+      # hit an enemy
+      if b.out_of_bounds or flag
+        true
+      else  
+        b.update
+        false
+      end
     end
     
-    # ENEMY BULLET COLLISION
     player_collision_info = [$player.x,$player.y,$player.w,$player.h]
     
     # cocoon bullets with player
-    $cocoon_bullets.each do |cb|
-      if rect_collision([cb.x,cb.y,cb.w,cb.h],player_collision_info)
-        puts "player was shot by cocoon"
-      end
+    $cocoon_bullets.delete_if do |cb|
+      if cb.out_of_bounds or rect_collision([cb.x,cb.y,cb.w,cb.h],player_collision_info)
+        #puts "player was shot by cocoon"
+        true
+      else
+        cb.update
+        false
+      end  
     end
     
     # butterfly bullets with player
-    $butterfly_bullets.each do |cb|
-      if rect_collision([cb.x,cb.y,cb.w,cb.h],player_collision_info)
-        puts "player was shot by butterfly"
-      end
+    $butterfly_bullets.delete_if do |bb|
+      if bb.out_of_bounds or rect_collision([bb.x,bb.y,bb.w,bb.h],player_collision_info)
+        #puts "player was shot by butterfly"
+        true
+      else
+        bb.update
+        false
+      end  
     end
     
+    # nymph bullets with the player
+    #$nymph_bullets.delete_if do |nb|
+    #end
+    
     # dragonfly bullets with player
+    #$dragonfly_bullets.delete_if |db|
+    #end
     
   end
   
@@ -183,6 +222,10 @@ class Main < Gosu::Window
     $cocoon_bullets.each{|cb| cb.draw}
     $butterflies.each{|b| b.draw}
     $butterfly_bullets.each{|bb| bb.draw}
+    #$nymphs.each{|n| n.draw}
+    #$nymph_bullets{|nb| nb.draw}
+    #$dragonflies.each{|d| d.draw}
+    #$dragonfly_bullets.each{|db| db.draw}
     $bullets.each{|b| b.draw} 
     $player.draw
   end
@@ -207,4 +250,4 @@ class Main < Gosu::Window
   
 end
 
-Main.new.show
+Metamorphian.new.show

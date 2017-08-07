@@ -1,12 +1,11 @@
 #---------------------------------------------------------------------
-# Bullet Hell class
+# Bullet Emitter class
 #   contains an assortment of Bullet Hell patterns
 #---------------------------------------------------------------------
 
 require_relative 'bullet'
-require_relative 'bullet_emitter'
 
-class BulletHell
+class BulletEmitter
   
   attr_reader :bullet_pause
   
@@ -16,7 +15,10 @@ class BulletHell
   
   def line(list, loc, speed, angle, frequency, frameCount)
     if frameCount > @bullet_pause+frequency
-      list << Bullet.new(loc[0], loc[1], speed, angle)
+      $sm.play_sound("laser",0.3,1.0,false)
+      x = loc[0]
+      y = loc[1]
+      list << Bullet.new(x, y, speed, angle)
       @bullet_pause = frameCount
     end  
   end
@@ -28,12 +30,24 @@ class BulletHell
       delta_x = $player.x - x
       delta_y = $player.y - y
       angle = Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
-      list << Bullet.new(x,y,3.0,angle)
+      list << Bullet.new(x, y, speed, angle)
       @bullet_pause = frameCount
     end
   end
   
-  def circle(list)
+  def circle(list, loc, speed, angle, frequency, frameCount)
+    if frameCount > @bullet_pause+frequency
+      x = loc[0]
+      y = loc[1]
+      for i in 1..18
+        angle += 20
+        list << Bullet.new(x, y, speed, angle)
+      end
+      @bullet_pause = frameCount
+    end
+  end
+  
+  def bouncing_circles
   end
   
   def flower(list)

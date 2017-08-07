@@ -4,7 +4,7 @@
 
 class Player
   
-  attr_reader :x, :y, :w, :h, :speed
+  attr_reader :x, :y, :w, :h, :speed, :bullet_emitter
   
   def initialize(x, y)
     @image = Gosu::Image.new("sprites/starfighter.bmp")
@@ -14,9 +14,17 @@ class Player
     @h = @image.height
     @speed = 3.0
     @angle = 0.0
+    @bullet_emitter = BulletEmitter.new
   end    
   
   def update
+    
+    # fire bullet when O button is pressed
+    if Gosu.button_down? Gosu::char_to_button_id('O')
+      bullet_emitter.line($bullets, [x,y], 10.0, -90, 2.0, Gosu.milliseconds/100)
+    end
+    
+    # movement
     if Gosu.button_down? Gosu::char_to_button_id('A') and x >= 0.0 
       @x -= speed
     end

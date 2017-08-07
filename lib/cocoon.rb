@@ -4,8 +4,8 @@
 
 class Cocoon
   
-  attr_reader :x, :y, :w, :h, :delay, :timer, :bullet_hell
-  attr_accessor :alive, :hits
+  attr_reader :x, :y, :w, :h, :delay, :timer, :bullet_emitter, :life
+  attr_accessor :dead, :hits
   
   def initialize(x,y)
     @image = Gosu::Image.new("sprites/cocoon.png")
@@ -17,10 +17,9 @@ class Cocoon
     @delay = 15.0
     @timer = 0.0
     @hits = 0.0
-    @alive = true
-    
-    @bullet_hell = BulletHell.new
-    
+    @dead = false
+    @life = 5
+    @bullet_emitter = BulletEmitter.new 
   end
   
   def update
@@ -28,23 +27,20 @@ class Cocoon
     
     # transform into butterfly
     if timer == 5
-      @alive = false
+      @dead = true
       $butterflies << Butterfly.new(x,y)
+      return
     end
     
     # killed by bullets
-    if hits >= 5
-      @alive = false
+    if hits >= life
+      @dead = true
     end
     
     # fire bullet at player
-    bullet_hell.at_player($cocoon_bullets,[x,y],3.0,0.0,15.0,frameCount)
+    bullet_emitter.at_player($cocoon_bullets,[x,y],3.0,0.0,15.0,frameCount)
     
     if frameCount > @bullet_pause+delay
-      #delta_x = $player.x - x
-      #delta_y = $player.y - y
-      #angle = Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
-      #$cocoon_bullets << Bullet.new(x,y,3.0,angle)
       @bullet_pause = frameCount
       @timer += 1
     end

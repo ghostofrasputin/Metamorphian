@@ -18,8 +18,11 @@ class Bullet
   end  
     
   def update
-    if x < 0 || x > $width || y < 0 || y > $height
+    
+    # bullet has gone off screen
+    if x < 0 or x > $width or y < 0 or y > $height
       @out_of_bounds = true
+      return
     end
     
     @x += Math.cos(Gosu.degrees_to_radians(angle))*speed

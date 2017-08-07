@@ -4,7 +4,8 @@
 
 class Caterpillar
   
-  attr_reader :x, :y, :w, :h, :food, :speed, :alive
+  attr_reader :x, :y, :w, :h, :food, :speed
+  attr_accessor :dead
   
   def initialize(x,y)
     @image = Gosu::Image.new("sprites/caterpillar.png")
@@ -16,13 +17,13 @@ class Caterpillar
     @distance = Float::INFINITY 
     @goal_food = nil
     @food_count = 0.0
-    @alive = true
+    @dead = false
   end
   
   def update
     
     if @food_count == 2
-      @alive = false
+      @dead = true
       $cocoons << Cocoon.new(x,y)
     end
     

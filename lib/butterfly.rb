@@ -2,12 +2,10 @@
 # Butterfly class
 #---------------------------------------------------------------------
 
-require_relative 'butterfly_bullet'
-
 class Butterfly
   
-  attr_reader :x, :y, :w, :h, :speed, :alive, :wall_step, :life,
-              :bullets, :delay
+  attr_reader :x, :y, :w, :h, :speed, :dead, :wall_step, :life,
+              :bullets, :delay, :bullet_emitter
   attr_accessor :hits
   
   def initialize(x,y)
@@ -16,30 +14,21 @@ class Butterfly
     @y = y
     @w = @image.width
     @h = @image.height
-    @speed = 3.0
-    @alive = true
+    @speed = 0.5
+    @dead = false
     @hits = 0.0
     @life = 10.0
     @wall_step = 5.0
-    @bullets = []
-    @bullet_pause = 0.0
-    @delay = 1.0
+    @bullet_emitter = BulletEmitter.new
   end
   
   def update
-    
     frameCount = Gosu.milliseconds/100
-    
     # fire bullet
-    if frameCount > @bullet_pause+delay
-      if bullets.length <= 5
-        $butterfly_bullets << ButterflyBullet.new(x,y)
-        @bullet_pause = frameCount
-      end
-    end
+    bullet_emitter.circle($butterfly_bullets,[x,y],4.0,0.0,50.0, frameCount)
     
     if hits == life
-      @alive = false
+      @dead = true
     end
     
     # boundary collision
@@ -52,13 +41,10 @@ class Butterfly
     end
     @x += speed
     @y += Math.sin(x/16)
-    
-    bullets.each{|b| b.update}
   end
   
   def draw
-    @image.draw_rot(x,y,ZOrder::BUTTERFLY,1.0)
-    bullets.each{|b| b.draw}
+    @image.draw_rot(x,y,ZOrder::ENEMY,1.0)
   end
   
 end
