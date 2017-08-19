@@ -25,25 +25,24 @@ class Cocoon
   def update
     frameCount = Gosu.milliseconds/100
     
-    # transform into butterfly
-    if timer == 5
-      @dead = true
-      $butterflies << Butterfly.new(x,y)
-      return
-    end
-    
     # killed by bullets
     if hits >= life
       @dead = true
     end
     
-    # fire bullet at player
-    bullet_emitter.at_player($cocoon_bullets,[x,y],3.0,0.0,15.0,frameCount)
-    
     if frameCount > @bullet_pause+delay
       @bullet_pause = frameCount
       @timer += 1
+      # transform into butterfly
+        if timer == 4
+          @dead = true
+          $butterflies << Butterfly.new(x,y)
+          return
+        end
     end
+    
+    # fire bullet at player
+    bullet_emitter.at_player($cocoon_bullets,[x,y],3.0,0.0,15.0,frameCount)
     
   end
   

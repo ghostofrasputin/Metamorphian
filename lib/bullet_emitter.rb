@@ -35,7 +35,7 @@ class BulletEmitter
     end
   end
   
-  def circle(list, loc, speed, angle, frequency, frameCount)
+  def circle(list, loc, frameCount, speed=4.0, angle=0.0, frequency=50.0)
     if frameCount > @bullet_pause+frequency
       x = loc[0]
       y = loc[1]

@@ -67,7 +67,7 @@ $sm = SoundManager.new
   end
 
 #---------------------------------------------------------------------
-# Module
+# ZOrder Module
 #   specifies in which order objects are drawn
 #---------------------------------------------------------------------  
   
