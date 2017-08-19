@@ -4,6 +4,7 @@
 #---------------------------------------------------------------------
 
 require_relative 'bullet'
+require_relative 'helix_bullet'
 
 class BulletEmitter
   
@@ -59,7 +60,15 @@ class BulletEmitter
   def slither(list)
   end
   
-  def helix(list)
+  def helix(list, loc, frameCount, speed=2.0, angle=-270.0, frequency=0.0)
+    if frameCount > @bullet_pause+frequency
+      x = loc[0]
+      y = loc[1]
+      pos = HelixBullet.new(x, y, speed, angle, true)
+      neg = HelixBullet.new(x, y, speed, angle, false)
+      list << pos << neg
+      @bullet_pause = frameCount
+    end
   end
   
 end
