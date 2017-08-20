@@ -17,6 +17,7 @@
 require 'gosu'
 require_relative 'lib\animation'
 require_relative 'lib\sound_manager'
+require_relative 'lib\crosshairs'
 require_relative 'lib\bullet_emitter'
 require_relative 'lib\player'
 require_relative 'lib\food'
@@ -45,6 +46,7 @@ $dragonflies = []
 $dragonfly_bullets = []
 $player = Player.new(290, 700)
 $sm = SoundManager.new
+$crosshairs = Crosshairs.new
 
 #---------------------------------------------------------------------
 # Collision Detection Functions
@@ -79,6 +81,7 @@ module ZOrder
   BUTTERFLY =  4
   BULLETS =    5
   UI =         6
+  MOUSE =      7
 end  
 
 #---------------------------------------------------------------------
@@ -89,7 +92,7 @@ end
 
 class Metamorphian < Gosu::Window
   
-  attr_reader :spawner, :bullet_hell
+  attr_reader :spawner
   
   def initialize
     super $width, $height #, :fullscreen => true
@@ -98,7 +101,6 @@ class Metamorphian < Gosu::Window
     $sm.play_sound("everglades", 0.6, 1.5, true)
     $sm.play_sound("synth_melody", 0.5, 1.0, true)
     # LOAD ANIMATIONS:
-    
     
     # generate food randomly for now
     for i in 0..100
@@ -109,6 +111,7 @@ class Metamorphian < Gosu::Window
   def update
     
     $player.update
+    $crosshairs.update(mouse_x, mouse_y)
     spawner.update
     
     $caterpillars.delete_if do |c|
@@ -228,6 +231,7 @@ class Metamorphian < Gosu::Window
     #$dragonfly_bullets.each{|db| db.draw}
     $bullets.each{|b| b.draw} 
     $player.draw
+    $crosshairs.draw
   end
   
   #-------------------------------------------------------------------
@@ -243,9 +247,9 @@ class Metamorphian < Gosu::Window
     end
   end
   
-  # allow cursor over game window
+  # cursor boolean
   def needs_cursor?
-    true
+    false
   end
   
 end

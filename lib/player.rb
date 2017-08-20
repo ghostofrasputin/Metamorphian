@@ -20,8 +20,12 @@ class Player
   def update
     
     # fire bullet when O button is pressed
-    if Gosu.button_down? Gosu::char_to_button_id('O')
-      bullet_emitter.line($bullets, [x,y], 10.0, -90, 2.0, Gosu.milliseconds/100)
+    #if Gosu.button_down? Gosu::char_to_button_id('O')
+    #  bullet_emitter.line($bullets, [x,y], 10.0, -90, 2.0, Gosu.milliseconds/100)
+    #end
+    
+    if Gosu.button_down? Gosu::MsLeft
+      bullet_emitter.at_mouse($bullets, [x,y], 10.0, -90, 2.0, Gosu.milliseconds/100)
     end
     
     # movement

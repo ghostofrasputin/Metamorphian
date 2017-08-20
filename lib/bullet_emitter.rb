@@ -36,6 +36,18 @@ class BulletEmitter
     end
   end
   
+  def at_mouse(list, loc, speed, angle, frequency, frameCount)
+    if frameCount > @bullet_pause+frequency
+      x = loc[0]
+      y = loc[1]
+      delta_x = $crosshairs.x - x
+      delta_y = $crosshairs.y - y
+      angle = Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
+      list << Bullet.new(x, y, speed, angle)
+      @bullet_pause = frameCount
+    end
+  end
+  
   def circle(list, loc, frameCount, speed=4.0, angle=0.0, frequency=50.0)
     if frameCount > @bullet_pause+frequency
       x = loc[0]
