@@ -25,8 +25,8 @@ class Bullet
       return
     end
     
-    @x += Math.cos(Gosu.degrees_to_radians(angle))*speed
-    @y += Math.sin(Gosu.degrees_to_radians(angle))*speed
+    @x += Math.cos(angle)*speed
+    @y += Math.sin(angle)*speed
   end
   
   def draw

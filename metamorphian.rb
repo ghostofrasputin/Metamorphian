@@ -98,8 +98,8 @@ class Metamorphian < Gosu::Window
     super $width, $height #, :fullscreen => true
     self.caption = "Metamorphian"
     @spawner = Spawner.new
-    $sm.play_sound("everglades", 0.6, 1.5, true)
-    $sm.play_sound("synth_melody", 0.5, 1.0, true)
+    #$sm.play_sound("everglades", 0.6, 1.5, true)
+    #$sm.play_sound("synth_melody", 0.5, 1.0, true)
     # LOAD ANIMATIONS:
     
     # generate food randomly for now
@@ -230,7 +230,7 @@ class Metamorphian < Gosu::Window
     #$dragonflies.each{|d| d.draw}
     #$dragonfly_bullets.each{|db| db.draw}
     $bullets.each{|b| b.draw} 
-    $player.draw
+    $player.draw(mouse_x, mouse_y)
     $crosshairs.draw
   end
   

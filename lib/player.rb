@@ -19,11 +19,7 @@ class Player
   
   def update
     
-    # fire bullet when O button is pressed
-    #if Gosu.button_down? Gosu::char_to_button_id('O')
-    #  bullet_emitter.line($bullets, [x,y], 10.0, -90, 2.0, Gosu.milliseconds/100)
-    #end
-    
+    # fires bullet in direction of mouse with mouse left click
     if Gosu.button_down? Gosu::MsLeft
       bullet_emitter.at_mouse($bullets, [x,y], 10.0, -90, 2.0, Gosu.milliseconds/100)
     end
@@ -44,8 +40,11 @@ class Player
     @x = x % $width
   end
   
-  def draw
-    @image.draw_rot(x, y, ZOrder::PLAYER, 0.0)
+  def draw(mx, my)
+    delta_y = x - mx
+    delta_x = y - my
+    angle = -Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
+    @image.draw_rot(x, y, ZOrder::PLAYER, angle)
   end
     
 end        

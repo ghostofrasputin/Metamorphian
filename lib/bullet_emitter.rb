@@ -16,7 +16,7 @@ class BulletEmitter
   
   def line(list, loc, speed, angle, frequency, frameCount)
     if frameCount > @bullet_pause+frequency
-      $sm.play_sound("laser",0.3,1.0,false)
+      #$sm.play_sound("laser",0.3,1.0,false)
       x = loc[0]
       y = loc[1]
       list << Bullet.new(x, y, speed, angle)
@@ -30,7 +30,7 @@ class BulletEmitter
       y = loc[1]
       delta_x = $player.x - x
       delta_y = $player.y - y
-      angle = Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
+      angle = Math.atan2(delta_y, delta_x)
       list << Bullet.new(x, y, speed, angle)
       @bullet_pause = frameCount
     end
@@ -38,11 +38,12 @@ class BulletEmitter
   
   def at_mouse(list, loc, speed, angle, frequency, frameCount)
     if frameCount > @bullet_pause+frequency
+      $sm.play_sound("laser",0.3,1.0,false)
       x = loc[0]
       y = loc[1]
       delta_x = $crosshairs.x - x
       delta_y = $crosshairs.y - y
-      angle = Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
+      angle = Math.atan2(delta_y, delta_x)
       list << Bullet.new(x, y, speed, angle)
       @bullet_pause = frameCount
     end
@@ -54,7 +55,7 @@ class BulletEmitter
       y = loc[1]
       for i in 1..18
         angle += 20
-        list << Bullet.new(x, y, speed, angle)
+        list << Bullet.new(x, y, speed, Gosu.degrees_to_radians(angle))
       end
       @bullet_pause = frameCount
     end
