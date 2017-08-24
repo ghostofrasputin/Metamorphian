@@ -8,7 +8,7 @@ class Cocoon
   attr_accessor :dead, :hits
   
   def initialize(x,y)
-    @image = Gosu::Image.new("sprites/cocoon.png")
+    @image = Gosu::Image.new("sprites/cocoon/cocoon.png")
     @x = x
     @y = y
     @w = @image.width

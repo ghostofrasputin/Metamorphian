@@ -9,11 +9,12 @@ class Butterfly
   attr_accessor :hits
   
   def initialize(x,y)
-    @image = Gosu::Image.new("sprites/butterfly.png")
+    #@image = Gosu::Image.new("sprites/butterfly/butterfly.png")
+    @flapping = Animation.new("sprites/butterfly/wings_flapping_sprite_sheet.png",150,125)
     @x = x
     @y = y
-    @w = @image.width
-    @h = @image.height
+    @w = 150
+    @h = 125
     @speed = 0.5
     @dead = false
     @hits = 0.0
@@ -44,7 +45,8 @@ class Butterfly
   end
   
   def draw
-    @image.draw_rot(x,y,ZOrder::ENEMY,1.0)
+    #@image.draw_rot(x,y,ZOrder::ENEMY,1.0)
+    @flapping.draw(x,y,ZOrder::ENEMY)
   end
   
 end

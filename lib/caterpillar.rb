@@ -8,7 +8,7 @@ class Caterpillar
   attr_accessor :dead
   
   def initialize(x,y)
-    @image = Gosu::Image.new("sprites/caterpillar.png")
+    @image = Gosu::Image.new("sprites/caterpillar/caterpillar.png")
     @x = x
     @y = y
     @w = @image.width

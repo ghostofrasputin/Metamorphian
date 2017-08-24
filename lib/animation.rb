@@ -9,7 +9,7 @@ class Animation
   end
   
   def draw(x,y,z)
-    img = @animation[Gosu.milliseconds / 100 % @animation.size]
+    img = @animation[Gosu.milliseconds / 10 % @animation.size]
     img.draw(x - img.width / 2.0, y- img.height / 2.0, z)
   end
   

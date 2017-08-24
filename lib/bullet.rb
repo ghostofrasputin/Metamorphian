@@ -7,7 +7,7 @@ class Bullet
   attr_reader :x, :y, :w, :h, :angle, :speed, :out_of_bounds
   
   def initialize(x, y, speed, angle)
-    @image = Gosu::Image.new("sprites/bullet.png")
+    @image = Gosu::Image.new("sprites/bullets/bullet.png")
     @x = x
     @y = y
     @w = @image.width
