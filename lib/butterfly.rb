@@ -26,7 +26,7 @@ class Butterfly
   def update
     frameCount = Gosu.milliseconds/100
     # fire bullet
-    bullet_emitter.circle($butterfly_bullets,[x,y],frameCount)
+    bullet_emitter.spiral($butterfly_bullets,[x,y],frameCount)
     
     if hits == life
       @dead = true
