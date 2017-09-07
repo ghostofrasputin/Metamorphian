@@ -15,6 +15,16 @@ class BulletEmitter
     @spiral_angles = [0.0, 180.0]
   end
   
+  def target_angle(point1, point2)
+    x1 = point1[0]
+    y1 = point1[1]
+    x2 = point2[0]
+    y2 = point2[1]
+    delta_x = x2 - x1
+    delta_y = y2 - y1
+    return Math.atan2(delta_y, delta_x)
+  end
+  
   def line(list, loc, speed, angle, frequency, frameCount)
     if frameCount > @bullet_pause+frequency
       #$sm.play_sound("laser",0.3,1.0,false)
@@ -25,27 +35,19 @@ class BulletEmitter
     end  
   end
   
-  def at_player(list, loc, speed, angle, frequency, frameCount)
+  def at_player(list, loc, speed, frequency, frameCount)
     if frameCount > @bullet_pause+frequency
-      x = loc[0]
-      y = loc[1]
-      delta_x = $player.x - x
-      delta_y = $player.y - y
-      angle = Math.atan2(delta_y, delta_x)
-      list << Bullet.new(x, y, speed, angle)
+      angle = target_angle(loc,[$player.x, $player.y])
+      list << Bullet.new(loc[0], loc[1], speed, angle)
       @bullet_pause = frameCount
     end
   end
   
-  def at_mouse(list, loc, speed, angle, frequency, frameCount)
+  def at_mouse(list, loc, speed, frequency, frameCount)
     if frameCount > @bullet_pause+frequency
       $sm.play_sound("laser",0.3,1.0,false)
-      x = loc[0]
-      y = loc[1]
-      delta_x = $crosshairs.x - x
-      delta_y = $crosshairs.y - y
-      angle = Math.atan2(delta_y, delta_x)
-      list << Bullet.new(x, y, speed, angle)
+      angle = target_angle(loc,[$crosshairs.x, $crosshairs.y])
+      list << Bullet.new(loc[0], loc[1], speed, angle)
       @bullet_pause = frameCount
     end
   end
@@ -75,6 +77,10 @@ class BulletEmitter
   
   def flower(list)
   end
+  
+  def n_spiral(list, loc, frameCount, degree_shift=10.0, speed=4.0, frequency=0.0)
+  end
+  
   
   def spiral(list, loc, frameCount, degree_shift=10.0, speed=4.0, frequency=0.0)
     if frameCount > @bullet_pause+frequency
@@ -113,6 +119,14 @@ class BulletEmitter
       list << pos << neg
       @bullet_pause = frameCount
     end
+  end
+  
+  # splits bullets up as they move toward player
+  def binary_split(list)
+  end
+  
+  # bounces bullet off the wall once
+  def wall_bounce(list)
   end
   
 end

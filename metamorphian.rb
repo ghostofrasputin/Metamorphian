@@ -17,6 +17,8 @@
 require 'gosu'
 require_relative 'lib\animation'
 require_relative 'lib\sound_manager'
+require_relative 'lib\room'
+require_relative 'lib\map'
 require_relative 'lib\crosshairs'
 require_relative 'lib\bullet_emitter'
 require_relative 'lib\player'

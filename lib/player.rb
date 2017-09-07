@@ -21,7 +21,7 @@ class Player
     
     # fires bullet in direction of mouse with mouse left click
     if Gosu.button_down? Gosu::MsLeft
-      bullet_emitter.at_mouse($bullets, [x,y], 10.0, -90, 2.0, Gosu.milliseconds/100)
+      bullet_emitter.at_mouse($bullets, [x,y], 15.0, 2.0, Gosu.milliseconds/100)
     end
     
     # movement

@@ -42,7 +42,7 @@ class Cocoon
     end
     
     # fire bullet at player
-    bullet_emitter.at_player($cocoon_bullets,[x,y],3.0,0.0,15.0,frameCount)
+    bullet_emitter.at_player($cocoon_bullets,[x,y],3.0,15.0,frameCount)
     
   end
   
