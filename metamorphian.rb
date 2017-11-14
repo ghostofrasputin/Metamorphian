@@ -34,7 +34,7 @@ require_relative 'lib\dragonfly'
 # Global variables and data structures
 #---------------------------------------------------------------------
 $width = 800
-$height = 800
+$height = 600
 $food = []
 $bullets = []
 $cocoon_bullets = []
@@ -46,7 +46,7 @@ $nymphs = []
 $nymph_bullets = []
 $dragonflies = []
 $dragonfly_bullets = []
-$player = Player.new(290, 700)
+$player = Player.new(290, 500)
 $sm = SoundManager.new
 $crosshairs = Crosshairs.new
 
@@ -106,7 +106,7 @@ class Metamorphian < Gosu::Window
     
     # generate food randomly for now
     for i in 0..100
-      $food << Food.new(rand($width),rand(50..$height))
+      $food << Food.new(rand($width),rand(200..$height))
     end
   end
   
@@ -166,7 +166,7 @@ class Metamorphian < Gosu::Window
       end
       # collision with butterflys
       $butterflies.each do |bu|
-        if rect_collision([b.x,b.y,b.w,b.h],[bu.x,bu.y,bu.w,bu.h])
+        if rect_collision([b.x,b.y,b.w,b.h],[bu.x-bu.w/2,bu.y-bu.h/2,bu.w,bu.h])
           # cocoons take 5 hits to die
           bu.hits += 1
           flag = true

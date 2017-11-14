@@ -47,6 +47,8 @@ class Butterfly
   def draw
     #@image.draw_rot(x,y,ZOrder::ENEMY,1.0)
     @flapping.draw(x,y,ZOrder::ENEMY)
+    # bounding box
+    #Gosu.draw_rect(x-w/2,y-h/2,w,h,Gosu::Color.argb(0xff_ffffff));
   end
   
 end
