@@ -2,57 +2,74 @@
 # Map class
 #---------------------------------------------------------------------
 
+require 'yaml'
+
 class Map
-  
-  attr_reader :rooms
-  
-  def initialize(x,y)
-    @floor_hash = {
-      1 => method(:floor1),
-      2 => method(:floor2),
-      3 => method(:floor3)
-    }
+
+  attr_reader :rooms, :map, :current_floor
+
+  def initialize
     @current_floor = 1
-    @rooms = generate_floor(floor_hash[current_floor].())
+    @current_room = nil
+    @map = Array.new(5) { Array.new(5) }
+    @rooms = parse(current_floor)
+    generate_floor(rooms)
   end
-  
+
   def update
-    #if room == boss room and boos is dead
-    # load Screen
-    # @current_floor+=1
-    # rooms = generate_floor(floor_hash[current_floor].call)
+
   end
-  
+
   def draw
   end
-  
-  def mini_map
-    
+
+  def generate_floor(rooms)
+    map.each do |row|
+      row.each do |col|
+
+      end
+    end
   end
-  
-  def generate_floor(floor)
+
+  def bfs
   end
-  
-  # pre-defined rooms for floor 1
-  def floor1
-    floor1 = []
-    room1 = Room.new
-    room2 = Room.new
-    room3 = Room.new
-    room4 = Room.new
-    room5 = Room.new
-    room6 = Room.new
-    room7 = Room.new
-    room8 = Room.new
-    room9 = Room.new
-    room10 = Room.new
-    return floor1
+
+  # parses a Yaml file to list of room objects
+  def parse(num)
+    yml_array = YAML.load_file(File.join(__dir__,"floors/floor"+num.to_s+".yml"))
+    count = 1
+    rooms = []
+    yml_array.each do |table|
+      table[count].each do |key, val|
+        room = Room.new
+        case key
+        when "label"
+          room.label = val
+        when "enemies"
+          #puts val
+          val.each do |enemy_type, locations|
+            case enemy_type
+            when "caterpillars"
+              locations.each do |loc|
+                room.caterpillars << Caterpillar.new(loc[0],loc[1])
+              end
+            when "nymphs"
+            when "cocoons"
+            when "dragonflies"
+            when "butterflies"
+            end
+          end
+        when "boss"
+        when "treasure"
+        when "background"
+          room.load_image(val)
+        else
+        end
+        rooms << room
+      end
+      count+=1
+    end
+    return rooms
   end
-  
-  def floor2
-  end
-  
-  def floor3
-  end
-  
+
 end

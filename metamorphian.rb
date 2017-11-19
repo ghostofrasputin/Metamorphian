@@ -2,11 +2,11 @@
 # Program: Metamorphian                                              #
 # Author: Jacob Preston                                              #
 #                                                                    #
-# Description: Arcade style fixed-shooter                            #      
+# Description: Arcade style fixed-shooter                            #
 #                                                                    #
 # Instructions:                                                      #
 # move back and forth with A and D                                   #
-# shoot by pressing the O button                                     # 
+# shoot by pressing the O button                                     #
 # change bullets with the P button (if possible)                     #
 #                                                                    #
 #--------------------------------------------------------------------#
@@ -49,11 +49,12 @@ $dragonfly_bullets = []
 $player = Player.new(290, 500)
 $sm = SoundManager.new
 $crosshairs = Crosshairs.new
+$map = Map.new
 
 #---------------------------------------------------------------------
 # Collision Detection Functions
 #---------------------------------------------------------------------
-  
+
   # collision detection for 2 rectangles
   def rect_collision(rect1, rect2)
     # rect 1
@@ -73,8 +74,8 @@ $crosshairs = Crosshairs.new
 #---------------------------------------------------------------------
 # ZOrder Module
 #   specifies in which order objects are drawn
-#---------------------------------------------------------------------  
-  
+#---------------------------------------------------------------------
+
 module ZOrder
   BACKGROUND = 0
   FOOD =       1
@@ -84,18 +85,18 @@ module ZOrder
   BULLETS =    5
   UI =         6
   MOUSE =      7
-end  
+end
 
 #---------------------------------------------------------------------
-# Main class 
+# Main class
 #   all game logic and drawing is done within this class
 #---------------------------------------------------------------------
 
 
 class Metamorphian < Gosu::Window
-  
+
   attr_reader :spawner
-  
+
   def initialize
     super $width, $height #, :fullscreen => true
     self.caption = "Metamorphian"
@@ -103,19 +104,19 @@ class Metamorphian < Gosu::Window
     #$sm.play_sound("everglades", 0.6, 1.5, true)
     #$sm.play_sound("synth_melody", 0.5, 1.0, true)
     # LOAD ANIMATIONS:
-    
+
     # generate food randomly for now
     for i in 0..100
       $food << Food.new(rand($width),rand(200..$height))
     end
   end
-  
+
   def update
-    
+
     $player.update
     $crosshairs.update(mouse_x, mouse_y)
     spawner.update
-    
+
     $caterpillars.delete_if do |c|
       if c.dead
         true
@@ -124,7 +125,7 @@ class Metamorphian < Gosu::Window
         false
       end
     end
-    
+
     $cocoons.delete_if do |c|
       if c.dead
         true
@@ -133,7 +134,7 @@ class Metamorphian < Gosu::Window
         false
       end
     end
-    
+
     $butterflies.delete_if do |b|
       if b.dead
         true
@@ -141,11 +142,11 @@ class Metamorphian < Gosu::Window
         b.update
         false
       end
-    end  
-    
+    end
+
     $bullets.delete_if do |b|
       flag = false
-      
+
       # collision with caterpillars
       $caterpillars.each do |c|
         if rect_collision([b.x,b.y,b.w,b.h],[c.x,c.y,c.w,c.h])
@@ -171,23 +172,23 @@ class Metamorphian < Gosu::Window
           bu.hits += 1
           flag = true
         end
-      end  
+      end
       # collision with dragonflies
       $dragonflies.each do |d|
       end
-      
+
       # clean up bullets that go off screen order
       # hit an enemy
       if b.out_of_bounds or flag
         true
-      else  
+      else
         b.update
         false
       end
     end
-    
+
     player_collision_info = [$player.x,$player.y,$player.w,$player.h]
-    
+
     # cocoon bullets with player
     $cocoon_bullets.delete_if do |cb|
       if cb.out_of_bounds or rect_collision([cb.x,cb.y,cb.w,cb.h],player_collision_info)
@@ -196,9 +197,9 @@ class Metamorphian < Gosu::Window
       else
         cb.update
         false
-      end  
+      end
     end
-    
+
     # butterfly bullets with player
     $butterfly_bullets.delete_if do |bb|
       if bb.out_of_bounds or rect_collision([bb.x,bb.y,bb.w,bb.h],player_collision_info)
@@ -207,19 +208,19 @@ class Metamorphian < Gosu::Window
       else
         bb.update
         false
-      end  
+      end
     end
-    
+
     # nymph bullets with the player
     #$nymph_bullets.delete_if do |nb|
     #end
-    
+
     # dragonfly bullets with player
     #$dragonfly_bullets.delete_if |db|
     #end
-    
+
   end
-  
+
   def draw
     $food.each{|f| f.draw}
     $caterpillars.each{|c| c.draw}
@@ -231,15 +232,15 @@ class Metamorphian < Gosu::Window
     #$nymph_bullets{|nb| nb.draw}
     #$dragonflies.each{|d| d.draw}
     #$dragonfly_bullets.each{|db| db.draw}
-    $bullets.each{|b| b.draw} 
+    $bullets.each{|b| b.draw}
     $player.draw(mouse_x, mouse_y)
     $crosshairs.draw
   end
-  
+
   #-------------------------------------------------------------------
   # Game Window Functions
   #-------------------------------------------------------------------
-  
+
   # escape quits game
   def button_down(id)
     if id == Gosu::KB_ESCAPE
@@ -248,12 +249,12 @@ class Metamorphian < Gosu::Window
       super
     end
   end
-  
+
   # cursor boolean
   def needs_cursor?
     false
   end
-  
+
 end
 
 Metamorphian.new.show

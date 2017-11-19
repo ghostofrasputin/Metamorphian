@@ -1,0 +1,94 @@
+- 1:
+    label: enemy
+    enemies:
+      caterpillars:
+        - [20,20]
+        - [100,100]
+      nymphs:
+        - [5,5]
+        - [400, 400]
+    background: image_name
+- 2:
+    label: enemy
+    enemies:
+      caterpillars:
+        - [20,20]
+        - [100,100]
+      nymphs:
+        - [5,5]
+        - [400, 400]
+    background: image_name
+- 3:
+    label: enemy
+    enemies:
+      caterpillars:
+        - [20,20]
+        - [100,100]
+      nymphs:
+        - [5,5]
+        - [400, 400]
+    background: image_name
+- 4:
+    label: enemy
+    enemies:
+      caterpillars:
+        - [20,20]
+        - [100,100]
+      nymphs:
+        - [5,5]
+        - [400, 400]
+    background: image_name
+- 5:
+    label: enemy
+    enemies:
+      caterpillars:
+        - [20,20]
+        - [100,100]
+      nymphs:
+        - [5,5]
+        - [400, 400]
+    background: image_name
+- 6:
+    label: enemy
+    enemies:
+      caterpillars:
+        - [20,20]
+        - [100,100]
+      nymphs:
+        - [5,5]
+        - [400, 400]
+    background: image_name
+- 7:
+    label: enemy
+    enemies:
+      caterpillars:
+        - [20,20]
+        - [100,100]
+      nymphs:
+        - [5,5]
+        - [400, 400]
+    background: image_name
+- 8:
+    label: enemy
+    enemies:
+      caterpillars:
+        - [20,20]
+        - [100,100]
+      nymphs:
+        - [5,5]
+        - [400, 400]
+    background: image_name
+- 9:
+    label: enemy
+    enemies:
+      caterpillars:
+        - [20,20]
+        - [100,100]
+      nymphs:
+        - [5,5]
+        - [400, 400]
+    background: image_name
+- 10:
+    label: boss
+    boss: [100,100]
+    background: image_name
