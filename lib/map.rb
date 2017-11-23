@@ -3,6 +3,7 @@
 #---------------------------------------------------------------------
 
 require 'yaml'
+require_relative 'heap_q'
 
 class Map
 
@@ -54,12 +55,15 @@ class Map
     end
 
     # add room layout to map
-    nodes = bfs([startx,starty], [goalx,goaly])
+    #nodes = bfs([startx,starty], [goalx,goaly])
+    nodes = a_star([startx,starty], [goalx,goaly])
     nodes.each do |node|
       i = node[0]
       j = node[1]
       if i == startx and j == starty
+        map[i][j] = random_room(rooms)
       elsif i == goalx and j == goaly
+        map[i][j] = random_room(rooms)
       else
         map[i][j] = random_room(rooms)
       end
@@ -98,6 +102,7 @@ class Map
     return successors.delete_if {|n| map[n[0]][n[1]] == 'W'}
   end
 
+  # breadth first search
   def bfs(start, goal)
     set = []
     queue = []
@@ -116,6 +121,43 @@ class Map
           set << s
           queue.unshift(state)
         end
+      end
+    end
+    puts "no path"
+    return []
+  end
+
+  # heuristic
+  def manhattan(n1,n2)
+    dx = (n1[0] - n2[0]).abs
+    dy = (n1[1] - n2[1]).abs
+    return dx + dy
+  end
+
+  # A* search
+  def a_star(start, goal)
+    closed_set = []
+    open_set = HeapQ.new
+    open_set << [[start,[]], 0]
+    while not open_set.isEmpty?
+      current = open_set.pop
+      node = current.data[0]
+      path = current.data[1]
+      if node[0] == goal[0] and node[1] == goal[1]
+        #puts path.inspect
+        return path << node
+      end
+      closed_set << node
+      successor(node).each do |s|
+        if closed_set.include? s
+          next
+        end
+        new_path = [].replace(path) << node
+        state = [s,new_path]
+        gcost = path.length+1
+        hcost = manhattan(s, goal)
+        fcost = gcost + hcost
+        open_set << [state, fcost]
       end
     end
     puts "no path"

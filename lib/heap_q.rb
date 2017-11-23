@@ -3,15 +3,19 @@
 #
 # Based on:
 # http://www.brianstorti.com/implementing-a-priority-queue-in-ruby/
+# My additions:
+# private inner Element class
+# << operator override function updated
+# isEmpty? function
 #---------------------------------------------------------------------
 
 class HeapQ
 
   class Element
     include Comparable
-    attr_accessor priority, data
-    def initialize(priority, data)
-      @priority, @data = priority, data
+    attr_accessor :data, :priority
+    def initialize(data, priority)
+      @data, @priority = data, priority
     end
     def <=>(other)
       @priority <=> other.priority
@@ -19,14 +23,14 @@ class HeapQ
   end
 
   private_constant :Element
-  attr_accessor elements
+  attr_accessor :heap
 
   def initialize
-    @heap = [nil]
+    @heap = [666]
   end
 
   def <<(element)
-    @heap << element
+    @heap << Element.new(element[0],element[1])
     bubble_up(@heap.length-1)
   end
 
@@ -47,7 +51,7 @@ class HeapQ
 
   def bubble_down(i)
     c_i = i*2
-    return if c_1 > @heap.length-1
+    return if c_i > @heap.length-1
     not_last = c_i < @heap.size-1
     left = @heap[c_i]
     right = @heap[c_i+1]
@@ -59,6 +63,14 @@ class HeapQ
 
   def swap(src, tar)
     @heap[src], @heap[tar] = @heap[tar], @heap[src]
+  end
+
+  def isEmpty?
+    if @heap.length == 1
+      return true
+    else
+      return false
+    end
   end
 
 end
