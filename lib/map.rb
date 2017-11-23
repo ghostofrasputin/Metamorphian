@@ -58,7 +58,11 @@ class Map
     nodes.each do |node|
       i = node[0]
       j = node[1]
-      map[i][j] = random_room(rooms)
+      if i == startx and j == starty
+      elsif i == goalx and j == goaly
+      else
+        map[i][j] = random_room(rooms)
+      end
     end
 
     print_map
