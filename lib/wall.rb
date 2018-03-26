@@ -7,7 +7,6 @@ class Wall < Chingu::GameObject
   traits :collision_detection
 
   def setup
-    @image = Image["sprites/wall.png"]
     self.factor = 1
   end
 end

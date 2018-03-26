@@ -8,7 +8,7 @@ class Bullet < Chingu::GameObject
   attr_accessor :speed, :angle
 
   def setup
-    @image = Image["sprites/bullets/bullet.png"]
+    @image = Gosu::Image.new("sprites/bullets/bullet.png")
     @speed = options[:speed]
     @angle = options[:angle]
   end
@@ -16,9 +16,9 @@ class Bullet < Chingu::GameObject
   def update
     @x += Math.cos(angle)*speed
     @y += Math.sin(angle)*speed
-    if self.first_collision(Wall)
-      destroy
-    end
+    #if self.first_collision(Wall)
+    #  destroy
+    #end
   end
 
 end

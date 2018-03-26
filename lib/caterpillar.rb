@@ -4,13 +4,14 @@
 
 class Caterpillar < Chingu::GameObject
   trait :bounding_box
-  traits :timer, :collision_detection
+  traits :collision_detection
   attr_reader :speed, :food
+  attr_accessor :goal_food
 
   def setup
-    @image = Image["sprites/caterpillar/caterpillar.png"]
+    @image = Gosu::Image.new("sprites/caterpillar/caterpillar.png")
     @food = options[:food]
-    @speed = 1
+    @speed = 1.0
     @distance = Float::INFINITY
     @goal_food = nil
     @food_count = 0.0
@@ -18,8 +19,8 @@ class Caterpillar < Chingu::GameObject
 
   def update
 
-    if @food_count == 2
-      #$cocoons << Cocoon.new(x,y)
+    if @food_count == 4
+      Cocoon.create(:x=>x,:y=>y,:zorder=>ZOrder::ENEMY)
       destroy
     end
 
@@ -50,9 +51,11 @@ class Caterpillar < Chingu::GameObject
       end
 
       # caterpillar food collision
-      # if caterpillar.first_collision(FOOD)
-      #   @food_count+=1
-      # end
+      if self.bounding_box_collision?(goal_food)
+        @food_count += 1
+        goal_food.destroy
+        food.delete(goal_food)
+      end
     end
   end
 

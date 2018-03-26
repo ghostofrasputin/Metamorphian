@@ -65,8 +65,8 @@ class Metamorphian < Chingu::Window
   def initialize()
     super($width,$height,false)
     $window.caption = "Metamorphian"
-    @cursor = true
-    @cursor = Gosu::Image.new(self, "sprites/crosshairs.png")
+    @cursor = false
+    @cursor = Gosu::Image.new("sprites/crosshairs.png")
   end
 
   def setup

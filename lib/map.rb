@@ -15,11 +15,13 @@ end
 
 class Map
 
-  attr_reader :rooms, :map, :current_floor, :starting_room
+  attr_reader :rooms, :current_floor, :starting_room
+  attr_accessor :level_rooms, :map
 
   def initialize
     @current_floor = 1
-    @current_room = nil
+    @starting_room = nil
+    @level_rooms = []
     @map = Array.new(5) { Array.new(5) }
     @rooms = parse(current_floor)
     generate_floor(rooms)
@@ -51,27 +53,34 @@ class Map
     while nodes == []
       map.each_with_index do |row, i|
         row.each_with_index do |col , j|
-          #if map[i][j] == 'W'
-          #  map[i][j] = nil
-          #end
           if not (i == goalx and j == goaly)
-            if rand < 0.3
+            if rand < 0.5
               map[i][j] = 'W'
+            else
+              map[i][j] = '#'
             end
           end
         end
       end
       nodes = bfs([startx,starty], [goalx,goaly])
+      if nodes == []
+        @map = Array.new(5) { Array.new(5) }
+      end
+      # the path is built with
+      # enemy rooms so if the path exceeds that
+      # than there's no rooms to build the path with
+      if nodes.length > rooms.length - 2
+        @map = Array.new(5) { Array.new(5) }
+        nodes = []
+      end
     end
-
-    # # add rooms to path
+    # add rooms to path
     offset = 600
     nodes.each do |node|
-       puts("i #{node[1]} j #{node[0]}")
        i = (node[0]*800)+offset
        j = (node[1]*800)+offset
        rd = random_room(rooms, false)
-       Room.create(
+       level_rooms << Room.create(
          :x => j,
          :y => i,
          :zorder => ZOrder::ROOM,
@@ -83,53 +92,60 @@ class Map
          :butterflies => rd.butterflies,
          :dragonflies => rd.dragonflies,
          :boss => rd.boss,
-         :image => Image[rd.room_background]
+         :image => Gosu::Image.new(rd.room_background)
        )
        map[node[0]][node[1]] = 'R'
     end
-
     # add ony extra rooms to the path
     map.each_with_index do |row, i|
       row.each_with_index do |col , j|
-        if map[i][j] == 'W'
+        if map[i][j] == 'W' or map[i][j] == '#'
           successors = successor([i,j])
           #puts successors.inspect
-          successors.each do |s|
-            if map[s[0]][s[1]] == 'R' and rooms.length > 0
-              rx = (j*800)+offset
-              ry = (i*800)+offset
-              rd = random_room(rooms, true)
-              Room.create(
-                :x => rx,
-                :y => ry,
-                :zorder => ZOrder::ROOM,
-                :label => rd.label,
-                :gates => nil,
-                :caterpillars => rd.caterpillars,
-                :nymphs => rd.nymphs,
-                :cocoons => rd.cocoons,
-                :butterflies => rd.butterflies,
-                :dragonflies => rd.dragonflies,
-                :boss => rd.boss,
-                :image => Image[rd.room_background]
-              )
-              if rd.label == "start"
-                map[i][j] = 'S'
-                $player = Player.create(:x => rx, :y => ry, :zorder => ZOrder::PLAYER)
-              elsif rd.label == "boss"
-                map[i][j] = 'B'
-              else
-                map[i][j] = 'R'
+          if !successors.empty?
+            successors.each do |s|
+              if map[s[0]][s[1]] == 'R' and rooms.length > 0
+                rx = (j*800)+offset
+                ry = (i*800)+offset
+                rd = random_room(rooms, true)
+                r = Room.create(
+                  :x => rx,
+                  :y => ry,
+                  :zorder => ZOrder::ROOM,
+                  :label => rd.label,
+                  :gates => nil,
+                  :caterpillars => rd.caterpillars,
+                  :nymphs => rd.nymphs,
+                  :cocoons => rd.cocoons,
+                  :butterflies => rd.butterflies,
+                  :dragonflies => rd.dragonflies,
+                  :boss => rd.boss,
+                  :image => Gosu::Image.new(rd.room_background)
+                )
+                level_rooms << r
+                if rd.label == "start"
+                  map[i][j] = 'S'
+                  $player = Player.create(:x => rx,
+                                          :y => ry,
+                                          :zorder => ZOrder::PLAYER,
+                                          :cr => r,
+                                          :rooms => level_rooms
+                  )
+                elsif rd.label == "boss"
+                  map[i][j] = 'B'
+                else
+                  map[i][j] = 'R'
+                end
+                break
               end
-              break
             end
           end
         end
       end
     end
 
-    # # Debug: print out map
-    print_map
+    # Debug: print out map
+    #print_map
 
   end
 
@@ -174,15 +190,15 @@ class Map
       if node[0] == goal[0] and node[1] == goal[1]
         return path << node
       end
-      if path.length > 20
-        return []
-      end
-      successor(node).each do |s|
-        if not set.include? s
-          new_path = [].replace(path) << node
-          state = [s,new_path]
-          set << s
-          queue.unshift(state)
+      successors = successor(node)
+      if !successors.empty?
+        successors.each do |s|
+          if not set.include? s
+            new_path = [].replace(path) << node
+            state = [s,new_path]
+            set << s
+            queue.unshift(state)
+          end
         end
       end
     end

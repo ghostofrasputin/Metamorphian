@@ -12,9 +12,9 @@ class Room < Chingu::GameObject
   def setup
     @defeated = false
     @food = []
+    @walls = []
     @fake = options[:fake]
     @label = options[:label]
-    @walls = options[:walls]
     @gates = options[:gates]
     @caterpillars = options[:caterpillars]
     @nymphs = options[:nymphs]
@@ -24,12 +24,11 @@ class Room < Chingu::GameObject
     @boss = options[:boss]
 
     # generate food randomly for now
-    for i in 0..100
-       f = Food.create(:x=>rand((x-image.width/2)..(x+image.width/2)),
-                   :y=>rand((y-image.height/2)..(y+image.height/2)),
+    for i in 0..20
+       food << Food.create(:x=>rand((x-image.width/2+64)..(x+image.width/2-64)),
+                   :y=>rand((y-image.height/2+64)..(y+image.height/2-64)),
                    :zorder => ZOrder::FOOD
        )
-       food << f
     end
 
     # spawn gates
@@ -39,9 +38,15 @@ class Room < Chingu::GameObject
       end
     end
 
-    # spawn walls
+    # spawn walls, each room has 4 main walls,
+    # plus optional yaml file obstacle walls
     if fake.nil?
-      spawn_walls
+      h = Gosu::Image.new("sprites/rooms/floor1/horizontal.png")
+      v = Gosu::Image.new("sprites/rooms/floor1/vertical.png")
+      walls << Wall.create(:x=> x-width/2+16, :y=>y, :zorder=>ZOrder::WALL, :image => v)
+      walls << Wall.create(:x=> x+width/2-16, :y=>y, :zorder=>ZOrder::WALL, :image => v)
+      walls << Wall.create(:x=> x, :y=>y-width/2+16, :zorder=>ZOrder::WALL, :image => h)
+      walls << Wall.create(:x=> x, :y=>y+width/2-16, :zorder=>ZOrder::WALL, :image => h)
     end
 
     # spawn caterpillars
@@ -57,44 +62,8 @@ class Room < Chingu::GameObject
 
   end
 
-  def spawn_walls
-    # spawn walls all around room except for gate areas
-    width = image.width/32
-    height = image.height/32
-    # top
-    temp_x = x - image.width/2 + 16
-    temp_y = y - image.height/2 + 16
-    for i in 1..width
-      if !isGate(temp_x,temp_y)
-        Wall.create(:x=> temp_x, :y=>temp_y, :zorder=>ZOrder::WALL)
-      end
-      temp_x += 32
-    end
-    # left
-    temp_x = x - image.width/2 + 16
-    temp_y += 32
-    for i in 3..height
-      if !isGate(temp_x,temp_y)
-        Wall.create(:x=> temp_x, :y=>temp_y, :zorder=>ZOrder::WALL)
-      end
-      temp_y += 32
-    end
-    # bottom
-    for i in 1..width
-      if !isGate(temp_x,temp_y)
-        Wall.create(:x=> temp_x, :y=>temp_y, :zorder=>ZOrder::WALL)
-      end
-      temp_x += 32
-    end
-    # right
-    temp_x -= 32
-    temp_y -= 32
-    for i in 3..height
-      if !isGate(temp_x,temp_y)
-        Wall.create(:x=> temp_x, :y=>temp_y, :zorder=>ZOrder::WALL)
-      end
-      temp_y -= 32
-    end
+  def update
+
   end
 
   def isGate(dx,dy)

@@ -38,7 +38,7 @@ class BulletEmitter
   def at_player(list, loc, speed, frequency, frameCount)
     if frameCount > @bullet_pause+frequency
       angle = target_angle(loc,[$player.x, $player.y])
-      list << Bullet.new(loc[0], loc[1], speed, angle)
+      Bullet.create(:x => loc[0], :y =>loc[1],:speed => speed, :angle => angle)
       @bullet_pause = frameCount
     end
   end
@@ -87,7 +87,7 @@ class BulletEmitter
     if frameCount > @bullet_pause+frequency
       x = loc[0]
       y = loc[1]
-      list << Bullet.new(x, y, speed, Gosu.degrees_to_radians(spiral_angles[0]))
+      Bullet.create(:x=>x, :y=>y, :speed=>speed, :angle=>Gosu.degrees_to_radians(spiral_angles[0]))
       @spiral_angles[0] += degree_shift % 360
       @bullet_pause = frameCount
     end

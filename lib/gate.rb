@@ -13,7 +13,7 @@ class Gate < Chingu::GameObject
     @fakeRoom = Room.create(:x=>room.x, :y=>room.y,:width => room.width/1.5,
       :height => room.width/1.5, :alpha=>0.0,
       #:color=>Gosu::Color.argb(0xff_000000), :alpha => 255
-      :image=>Image["sprites/rooms/floor1/room.png"], :fake=>true)
+      :image=>Gosu::Image.new("sprites/rooms/floor1/room.png"), :fake=>true)
   end
 
   def update
@@ -33,7 +33,7 @@ class Gate < Chingu::GameObject
   end
 
   def up
-    @image = Image["sprites/gate.png"]
+    @image = Gosu::Image.new("sprites/gate.png")
   end
 
   def down

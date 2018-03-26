@@ -2,52 +2,48 @@
 # Cocoon class
 #---------------------------------------------------------------------
 
-class Cocoon
-  
+class Cocoon < Chingu::GameObject
+  trait :bounding_box
+  traits :collision_detection
   attr_reader :x, :y, :w, :h, :delay, :timer, :bullet_emitter, :life
-  attr_accessor :dead, :hits
-  
-  def initialize(x,y)
+  attr_accessor :hits
+
+  def setup
     @image = Gosu::Image.new("sprites/cocoon/cocoon.png")
-    @x = x
-    @y = y
-    @w = @image.width
-    @h = @image.height
     @bullet_pause = 0.0
     @delay = 15.0
     @timer = 0.0
     @hits = 0.0
     @dead = false
     @life = 5
-    @bullet_emitter = BulletEmitter.new 
+    @bullet_emitter = BulletEmitter.new
   end
-  
+
   def update
     frameCount = Gosu.milliseconds/100
-    
+
     # killed by bullets
     if hits >= life
       @dead = true
     end
-    
+
     if frameCount > @bullet_pause+delay
       @bullet_pause = frameCount
       @timer += 1
       # transform into butterfly
         if timer == 4
-          @dead = true
-          $butterflies << Butterfly.new(x,y)
-          return
+          Butterfly.create(:x=>x,:y=>y,:zorder=>ZOrder::ENEMY)
+          destroy
         end
     end
-    
-    # fire bullet at player
-    bullet_emitter.at_player($cocoon_bullets,[x,y],3.0,15.0,frameCount)
-    
+
+    # fire bullet at player if they're in range
+    if (($player.x-x)**2.0+($player.y-y)**2.0)**(0.5) < 400
+      bullet_emitter.at_player([],[x,y],3.0,15.0,frameCount)
+    else
+
+    end
+
   end
-  
-  def draw
-    @image.draw_rot(x,y,ZOrder::ENEMY,1.0)
-  end
-  
+
 end

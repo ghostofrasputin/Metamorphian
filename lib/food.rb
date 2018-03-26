@@ -4,15 +4,9 @@
 
 class Food < Chingu::GameObject
   trait :bounding_box
-  traits :timer, :collision_detection
+  traits :collision_detection
   def setup
-    @image = Image["sprites/food.png"]
-  end
-
-  def update
-    #if self.first_collision(CATERPILLAR)
-    #  destroy
-    #end
+    @image = Gosu::Image.new("sprites/food.png")
   end
 
 end
