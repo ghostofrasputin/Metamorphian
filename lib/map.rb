@@ -1,13 +1,21 @@
 #---------------------------------------------------------------------
 # Map class
+#   parses yaml level files, stores room data for procedurally
+#   generated levels based on pre-defined rooms
 #---------------------------------------------------------------------
 
 require 'yaml'
-require_relative 'heap_q'
+
+# temporarily stores room data for Room object to use
+# during the generate_floor function
+class RoomData
+  attr_accessor :label, :food, :walls, :gates, :caterpillars, :nymphs, :cocoons,
+    :butterflies, :dragonflies, :boss, :room_background
+end
 
 class Map
 
-  attr_reader :rooms, :map, :current_floor
+  attr_reader :rooms, :map, :current_floor, :starting_room
 
   def initialize
     @current_floor = 1
@@ -15,13 +23,7 @@ class Map
     @map = Array.new(5) { Array.new(5) }
     @rooms = parse(current_floor)
     generate_floor(rooms)
-  end
 
-  def update
-
-  end
-
-  def draw
   end
 
   def generate_floor(rooms)
@@ -44,39 +46,97 @@ class Map
     end
 
     # fill map with random walls
+    # generate initial path
+    nodes = []
+    while nodes == []
+      map.each_with_index do |row, i|
+        row.each_with_index do |col , j|
+          #if map[i][j] == 'W'
+          #  map[i][j] = nil
+          #end
+          if not (i == goalx and j == goaly)
+            if rand < 0.3
+              map[i][j] = 'W'
+            end
+          end
+        end
+      end
+      nodes = bfs([startx,starty], [goalx,goaly])
+    end
+
+    # # add rooms to path
+    offset = 600
+    nodes.each do |node|
+       puts("i #{node[1]} j #{node[0]}")
+       i = (node[0]*800)+offset
+       j = (node[1]*800)+offset
+       rd = random_room(rooms, false)
+       Room.create(
+         :x => j,
+         :y => i,
+         :zorder => ZOrder::ROOM,
+         :gates => nil,
+         :label => rd.label,
+         :caterpillars => rd.caterpillars,
+         :nymphs => rd.nymphs,
+         :cocoons => rd.cocoons,
+         :butterflies => rd.butterflies,
+         :dragonflies => rd.dragonflies,
+         :boss => rd.boss,
+         :image => Image[rd.room_background]
+       )
+       map[node[0]][node[1]] = 'R'
+    end
+
+    # add ony extra rooms to the path
     map.each_with_index do |row, i|
       row.each_with_index do |col , j|
-        if not (i == goalx and j == goaly)
-          if rand < 0.3
-            map[i][j] = 'W'
+        if map[i][j] == 'W'
+          successors = successor([i,j])
+          #puts successors.inspect
+          successors.each do |s|
+            if map[s[0]][s[1]] == 'R' and rooms.length > 0
+              rx = (j*800)+offset
+              ry = (i*800)+offset
+              rd = random_room(rooms, true)
+              Room.create(
+                :x => rx,
+                :y => ry,
+                :zorder => ZOrder::ROOM,
+                :label => rd.label,
+                :gates => nil,
+                :caterpillars => rd.caterpillars,
+                :nymphs => rd.nymphs,
+                :cocoons => rd.cocoons,
+                :butterflies => rd.butterflies,
+                :dragonflies => rd.dragonflies,
+                :boss => rd.boss,
+                :image => Image[rd.room_background]
+              )
+              if rd.label == "start"
+                map[i][j] = 'S'
+                $player = Player.create(:x => rx, :y => ry, :zorder => ZOrder::PLAYER)
+              elsif rd.label == "boss"
+                map[i][j] = 'B'
+              else
+                map[i][j] = 'R'
+              end
+              break
+            end
           end
         end
       end
     end
 
-    # add room layout to map
-    #nodes = bfs([startx,starty], [goalx,goaly])
-    nodes = a_star([startx,starty], [goalx,goaly])
-    nodes.each do |node|
-      i = node[0]
-      j = node[1]
-      if i == startx and j == starty
-        map[i][j] = random_room(rooms)
-      elsif i == goalx and j == goaly
-        map[i][j] = random_room(rooms)
-      else
-        map[i][j] = random_room(rooms)
-      end
-    end
-
+    # # Debug: print out map
     print_map
 
   end
 
-  def random_room(rooms)
+  def random_room(rooms, flag)
     while true
       r = rooms.sample
-      if not r.label == "boss"
+      if r.label != "boss" and r.label != "start" or flag
         rooms.delete(r)
         return r
       end
@@ -114,6 +174,9 @@ class Map
       if node[0] == goal[0] and node[1] == goal[1]
         return path << node
       end
+      if path.length > 20
+        return []
+      end
       successor(node).each do |s|
         if not set.include? s
           new_path = [].replace(path) << node
@@ -123,44 +186,6 @@ class Map
         end
       end
     end
-    puts "no path"
-    return []
-  end
-
-  # heuristic
-  def manhattan(n1,n2)
-    dx = (n1[0] - n2[0]).abs
-    dy = (n1[1] - n2[1]).abs
-    return dx + dy
-  end
-
-  # A* search
-  def a_star(start, goal)
-    closed_set = []
-    open_set = HeapQ.new
-    open_set << [[start,[]], 0]
-    while not open_set.isEmpty?
-      current = open_set.pop
-      node = current.data[0]
-      path = current.data[1]
-      if node[0] == goal[0] and node[1] == goal[1]
-        #puts path.inspect
-        return path << node
-      end
-      closed_set << node
-      successor(node).each do |s|
-        if closed_set.include? s
-          next
-        end
-        new_path = [].replace(path) << node
-        state = [s,new_path]
-        gcost = path.length+1
-        hcost = manhattan(s, goal)
-        fcost = gcost + hcost
-        open_set << [state, fcost]
-      end
-    end
-    puts "no path"
     return []
   end
 
@@ -170,33 +195,34 @@ class Map
     count = 1
     rooms = []
     yml_array.each do |table|
-      room = Room.new
+      rd = RoomData.new
       table[count].each do |key, val|
         case key
         when "label"
-          room.label = val
+          rd.label = val
         when "enemies"
-          #puts val
           val.each do |enemy_type, locations|
             case enemy_type
             when "caterpillars"
-              locations.each do |loc|
-                room.caterpillars << Caterpillar.new(loc[0],loc[1])
-              end
+              rd.caterpillars = locations
             when "nymphs"
+              rd.nymphs = locations
             when "cocoons"
+              rd.cocoons = locations
             when "dragonflies"
+              rd.dragonflies = locations
             when "butterflies"
+              rd.butterflies = locations
             end
           end
         when "boss"
-        when "treasure"
+          rd.boss = val
         when "background"
-          room.load_image(val)
+          rd.room_background = val
         else
         end
       end
-      rooms << room
+      rooms << rd
       count+=1
     end
     return rooms
@@ -207,8 +233,12 @@ class Map
     map.each_with_index do |row, i|
       row.each_with_index do |col , j|
         #puts col
-        if col.is_a? Room
+        if col == 'R'
           print 'R'
+        elsif col == 'S'
+          print 'S'
+        elsif col == 'B'
+          print 'B'
         elsif col == 'W'
           print 'W'
         else

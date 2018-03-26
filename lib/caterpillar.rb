@@ -2,42 +2,38 @@
 # Caterpillar class
 #---------------------------------------------------------------------
 
-class Caterpillar
-  
-  attr_reader :x, :y, :w, :h, :food, :speed
-  attr_accessor :dead
-  
-  def initialize(x,y)
-    @image = Gosu::Image.new("sprites/caterpillar/caterpillar.png")
-    @x = x
-    @y = y
-    @w = @image.width
-    @h = @image.height
+class Caterpillar < Chingu::GameObject
+  trait :bounding_box
+  traits :timer, :collision_detection
+  attr_reader :speed, :food
+
+  def setup
+    @image = Image["sprites/caterpillar/caterpillar.png"]
+    @food = options[:food]
     @speed = 1
-    @distance = Float::INFINITY 
+    @distance = Float::INFINITY
     @goal_food = nil
     @food_count = 0.0
-    @dead = false
   end
-  
+
   def update
-    
+
     if @food_count == 2
-      @dead = true
-      $cocoons << Cocoon.new(x,y)
+      #$cocoons << Cocoon.new(x,y)
+      destroy
     end
-    
-    $food.each do |f|
+
+    food.each do |f|
       fx = f.x
       fy = f.y
       temp_dist = ((fx-x)**2.0+(fy-y)**2.0)**(0.5)
-      if temp_dist < @distance 
+      if temp_dist < @distance
         @distance = temp_dist
-        @goal_food = f  
+        @goal_food = f
       end
     end
-    @distance = Float::INFINITY 
-    
+    @distance = Float::INFINITY
+
     # go towards food goal
     if @goal_food != nil
       if @goal_food.x > x
@@ -52,21 +48,12 @@ class Caterpillar
       if @goal_food.y < y
         @y -= speed
       end
-      
+
       # caterpillar food collision
-      if rect_collision([x,y,w,h],[@goal_food.x,@goal_food.y,@goal_food.w,@goal_food.h])
-        $food.delete(@goal_food)
-        @food_count+=1
-      end
-    end  
-  
+      # if caterpillar.first_collision(FOOD)
+      #   @food_count+=1
+      # end
+    end
   end
-  
-  def draw
-    @image.draw_rot(x, y, ZOrder::ENEMY, 0.0)
-  end
-  
-  def transform
-  end
-  
+
 end

@@ -2,49 +2,64 @@
 # Player class
 #---------------------------------------------------------------------
 
-class Player
-  
-  attr_reader :x, :y, :w, :h, :speed, :bullet_emitter
-  
-  def initialize(x, y)
-    @image = Gosu::Image.new("sprites/player/starfighter.bmp")
-    @x = x
-    @y = y
-    @w = @image.width
-    @h = @image.height
-    @speed = 3.0
-    @angle = 0.0
+class Player < Chingu::GameObject
+  trait :bounding_box, :debug => false
+  traits :timer, :collision_detection
+  attr_reader :bullet_emitter
+  attr_accessor :last_x, :last_y, :direction
+
+  def setup
+
+    @image = Image["sprites/player/starfighter.bmp"]
+    self.factor = 1
+    self.input = { [:holding_left, :holding_a] => :holding_left,
+                   [:holding_right, :holding_d] => :holding_right,
+                   [:holding_up, :holding_w] => :holding_up,
+                   [:holding_down, :holding_s] => :holding_down,
+                    :holding_mouse_left => :fire }
+    @speed = 4
+    @last_x, @last_y = @x, @y
     @bullet_emitter = BulletEmitter.new
-  end    
-  
+  end
+
+  def holding_left
+    move(-@speed, 0)
+  end
+
+  def holding_right
+    move(@speed, 0)
+  end
+
+  def holding_up
+    move(0, -@speed)
+  end
+
+  def holding_down
+    move(0, @speed)
+  end
+
+  def fire
+    bullet_emitter.at_mouse($bullets, [x,y], 15.0, 2.0, Gosu.milliseconds/100)
+  end
+
+  def move(x,y)
+    @x += x
+    @x = @last_x  if self.parent.viewport.outside_game_area?(self) #|| self.first_collision(Wall)
+
+    @y += y
+    @y = @last_y  if self.parent.viewport.outside_game_area?(self) #|| self.first_collision(Wall)
+  end
+
   def update
-    
-    # fires bullet in direction of mouse with mouse left click
-    if Gosu.button_down? Gosu::MsLeft
-      bullet_emitter.at_mouse($bullets, [x,y], 15.0, 2.0, Gosu.milliseconds/100)
-    end
-    
-    # movement
-    if Gosu.button_down? Gosu::char_to_button_id('A') and x >= 0.0 
-      @x -= speed
-    end
-    if Gosu.button_down? Gosu::char_to_button_id('D') and x <= $width
-      @x += speed
-    end
-    if Gosu.button_down? Gosu::char_to_button_id('W') and y >= 0.0
-      @y -= speed
-    end
-    if Gosu.button_down? Gosu::char_to_button_id('S') and y <= $height
-      @y+= speed
-    end
-    @x = x % $width
+    @last_x, @last_y = @x, @y
+    # player is always in the screen center (300,300)
+    dx = $width/2 - $window.mouse_x
+    dy = $height/2 - $window.mouse_y
+    @angle = -Gosu.radians_to_degrees(Math.atan2(dx, dy))
   end
-  
-  def draw(mx, my)
-    delta_y = x - mx
-    delta_x = y - my
-    angle = -Gosu.radians_to_degrees(Math.atan2(delta_y, delta_x))
-    @image.draw_rot(x, y, ZOrder::PLAYER, angle)
+
+  def remap(s, a1, a2, b1, b2)
+    return b1 + (s-a1)*(b2-b1)/(a2-a1);
   end
-    
-end        
+
+end

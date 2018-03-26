@@ -2,12 +2,12 @@
 # Wall class
 #---------------------------------------------------------------------
 
-class Wall
-  
-  def initialize
+class Wall < Chingu::GameObject
+  trait :bounding_box
+  traits :collision_detection
+
+  def setup
+    @image = Image["sprites/wall.png"]
+    self.factor = 1
   end
-  
-  def draw
-  end
-  
 end

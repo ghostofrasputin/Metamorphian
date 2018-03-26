@@ -1,13 +1,6 @@
 - 1:
-    label: enemy
-    enemies:
-      caterpillars:
-        - [20,20]
-        - [100,100]
-      nymphs:
-        - [5,5]
-        - [400, 400]
-    background: image_name
+    label: start
+    background: "sprites/rooms/floor1/room.png"
 - 2:
     label: enemy
     enemies:
@@ -17,7 +10,7 @@
       nymphs:
         - [5,5]
         - [400, 400]
-    background: image_name
+    background: "sprites/rooms/floor1/room.png"
 - 3:
     label: enemy
     enemies:
@@ -27,7 +20,7 @@
       nymphs:
         - [5,5]
         - [400, 400]
-    background: image_name
+    background: "sprites/rooms/floor1/room.png"
 - 4:
     label: enemy
     enemies:
@@ -37,7 +30,7 @@
       nymphs:
         - [5,5]
         - [400, 400]
-    background: image_name
+    background: "sprites/rooms/floor1/room.png"
 - 5:
     label: enemy
     enemies:
@@ -47,7 +40,7 @@
       nymphs:
         - [5,5]
         - [400, 400]
-    background: image_name
+    background: "sprites/rooms/floor1/room.png"
 - 6:
     label: enemy
     enemies:
@@ -57,7 +50,7 @@
       nymphs:
         - [5,5]
         - [400, 400]
-    background: image_name
+    background: "sprites/rooms/floor1/room.png"
 - 7:
     label: enemy
     enemies:
@@ -67,7 +60,7 @@
       nymphs:
         - [5,5]
         - [400, 400]
-    background: image_name
+    background: "sprites/rooms/floor1/room.png"
 - 8:
     label: enemy
     enemies:
@@ -77,7 +70,7 @@
       nymphs:
         - [5,5]
         - [400, 400]
-    background: image_name
+    background: "sprites/rooms/floor1/room.png"
 - 9:
     label: enemy
     enemies:
@@ -87,8 +80,8 @@
       nymphs:
         - [5,5]
         - [400, 400]
-    background: image_name
+    background: "sprites/rooms/floor1/room.png"
 - 10:
     label: boss
     boss: [100,100]
-    background: image_name
+    background: "sprites/rooms/floor1/room.png"
