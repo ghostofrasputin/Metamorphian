@@ -15,20 +15,21 @@ end
 
 class Map
 
-  attr_reader :rooms, :current_floor, :starting_room
-  attr_accessor :level_rooms, :map
+  attr_reader :rooms, :current_floor, :starting_room, :spacing, :offset
+  attr_accessor :level_rooms, :map, :hallways
 
   def initialize
     @current_floor = 1
     @starting_room = nil
     @level_rooms = []
+    @hallways = []
+    @spacing = 1200
+    @offset = 600
     @map = Array.new(5) { Array.new(5) }
     @rooms = parse(current_floor)
-    generate_floor(rooms)
-
   end
 
-  def generate_floor(rooms)
+  def generate_floor
     startx = 0
     starty = 0
     goalx = 0
@@ -75,14 +76,17 @@ class Map
       end
     end
     # add rooms to path
-    offset = 600
-    nodes.each do |node|
-       i = (node[0]*800)+offset
-       j = (node[1]*800)+offset
+    for iter in 0..nodes.length-1
+       cr = nodes[iter]
+       i = (cr[1]*spacing)+offset
+       j = (cr[0]*spacing)+offset
+       if iter < nodes.length-1
+         add_hallway([j,i],[nodes[iter+1][0],nodes[iter+1][1]])
+       end
        rd = random_room(rooms, false)
        level_rooms << Room.create(
-         :x => j,
-         :y => i,
+         :x => i,
+         :y => j,
          :zorder => ZOrder::ROOM,
          :gates => nil,
          :label => rd.label,
@@ -92,9 +96,9 @@ class Map
          :butterflies => rd.butterflies,
          :dragonflies => rd.dragonflies,
          :boss => rd.boss,
-         :image => Gosu::Image.new(rd.room_background)
+         :image => Gosu::Image.new(rd.room_background),
        )
-       map[node[0]][node[1]] = 'R'
+       map[cr[0]][cr[1]] = 'R'
     end
     # add ony extra rooms to the path
     map.each_with_index do |row, i|
@@ -105,12 +109,13 @@ class Map
           if !successors.empty?
             successors.each do |s|
               if map[s[0]][s[1]] == 'R' and rooms.length > 0
-                rx = (j*800)+offset
-                ry = (i*800)+offset
+                ri = (j*spacing)+offset
+                rj = (i*spacing)+offset
+                add_hallway([rj,ri],[s[0],s[1]])
                 rd = random_room(rooms, true)
                 r = Room.create(
-                  :x => rx,
-                  :y => ry,
+                  :x => ri,
+                  :y => rj,
                   :zorder => ZOrder::ROOM,
                   :label => rd.label,
                   :gates => nil,
@@ -125,12 +130,7 @@ class Map
                 level_rooms << r
                 if rd.label == "start"
                   map[i][j] = 'S'
-                  $player = Player.create(:x => rx,
-                                          :y => ry,
-                                          :zorder => ZOrder::PLAYER,
-                                          :cr => r,
-                                          :rooms => level_rooms
-                  )
+                  @starting_room = r
                 elsif rd.label == "boss"
                   map[i][j] = 'B'
                 else
@@ -144,9 +144,35 @@ class Map
       end
     end
 
-    # Debug: print out map
-    #print_map
+    set_gates_to_rooms
 
+    # Debug: print out map
+    print_map
+
+  end
+
+  def add_hallway(room1, room2)
+    room1_x = room1[1]
+    room1_y = room1[0]
+    room2_x = (room2[1]*spacing)+offset
+    room2_y = (room2[0]*spacing)+offset
+    hall_x = (room1_x+room2_x)/2
+    hall_y = (room1_y+room2_y)/2
+    if room1_x == room2_x
+      gate_info = [[hall_x,hall_y-400/2-16],[hall_x, hall_y+400/2+16]]
+      hallways << Hallway.create(:x=>hall_x,
+                                 :y=>hall_y,
+                                 :zorder=> ZOrder::ROOM,
+                                 :type=>"vertical",
+                                 :g => gate_info)
+    else
+      gate_info = [[hall_x-400/2-16,hall_y],[hall_x+400/2+16, hall_y]]
+      hallways << Hallway.create(:x=>hall_x,
+                                 :y=>hall_y,
+                                 :zorder=> ZOrder::ROOM,
+                                 :type=>"horizontal",
+                                 :g => gate_info)
+    end
   end
 
   def random_room(rooms, flag)
@@ -262,6 +288,18 @@ class Map
         end
       end
       puts ''
+    end
+  end
+
+  def set_gates_to_rooms
+    hallways.each do |h|
+      h.gates.each do |g|
+        level_rooms.each do |r|
+          if g.bounding_box_collision?(r)
+            r.gates << g
+          end
+        end
+      end
     end
   end
 

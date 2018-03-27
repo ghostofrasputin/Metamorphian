@@ -19,6 +19,7 @@ require_relative 'lib\sound_manager'
 require_relative 'lib\bullet_emitter'
 require_relative 'lib\gate'
 require_relative 'lib\wall'
+require_relative 'lib\hallway'
 require_relative 'lib\player'
 require_relative 'lib\food'
 require_relative 'lib\spawner'
@@ -38,13 +39,14 @@ module ZOrder
   BACKGROUND = 0
   ROOM =       1
   FOOD =       2
-  PLAYER =     3
-  WALL =       4
+  WALL =       3
   ENEMY =      4
-  BUTTERFLY =  5
-  BULLETS =    6
-  UI =         7
-  MOUSE =      8
+  GATE =       4
+  PLAYER =     5
+  BUTTERFLY =  6
+  BULLETS =    7
+  UI =         8
+  MOUSE =      9
 end
 
 #---------------------------------------------------------------------
@@ -56,6 +58,7 @@ $bullets = []
 $cocoon_bullets = []
 $butterfly_bullets = []
 $player = nil
+$map = nil
 $sm = SoundManager.new
 
 #---------------------------------------------------------------------
@@ -92,7 +95,7 @@ end
 class Play < GameState
 
   trait :viewport
-  attr_reader :spawner, :map
+  attr_reader :spawner
 
   def initialize(options = {})
     super
@@ -100,8 +103,14 @@ class Play < GameState
     #$sm.play_sound("everglades", 0.6, 1.5, true)
     #$sm.play_sound("synth_melody", 0.5, 1.0, true)
     self.viewport.lag = 0
-    self.viewport.game_area = [0, 0, 4600, 4600]
-    @map = Map.new
+    self.viewport.game_area = [0, 0, 6200, 6200]
+    $map = Map.new
+    $map.generate_floor()
+    $player = Player.create(:x => $map.starting_room.x,
+                            :y => $map.starting_room.y,
+                            :zorder => ZOrder::PLAYER,
+                            :cr => $map.starting_room
+    )
   end
 
   def update

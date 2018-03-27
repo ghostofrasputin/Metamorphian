@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------
 
 class Player < Chingu::GameObject
-  trait :bounding_box, :debug => false
+  trait :bounding_box
   traits :collision_detection
   attr_reader :bullet_emitter
   attr_accessor :last_x, :last_y, :direction, :cr, :rooms
@@ -17,9 +17,8 @@ class Player < Chingu::GameObject
                    [:holding_up, :holding_w] => :holding_up,
                    [:holding_down, :holding_s] => :holding_down,
                     :holding_mouse_left => :fire }
-    @speed = 4
+    @speed = 7
     @cr = options[:cr]
-    @rooms = options[:rooms]
     @last_x, @last_y = @x, @y
     @bullet_emitter = BulletEmitter.new
   end
@@ -47,18 +46,29 @@ class Player < Chingu::GameObject
   def move(x,y)
     @x += x
     if wall_collision?
-        @x = @last_x
+       @x = @last_x
     end
     @y += y
     if wall_collision?
-      @y = @last_y
+     @y = @last_y
     end
   end
 
   # checks for wall collisions of the current room
   def wall_collision?
     cr.walls.each do |w|
-      if self.bounding_box_collision?(w)
+      flag = true
+      if self.bounding_box_collision?(w) and !gate_collision?
+        return true
+      end
+    end
+    return false
+  end
+
+  # checks for gate collisions of the current room
+  def gate_collision?
+    cr.gates.each do |g|
+      if self.bounding_box_collision?(g)
         return true
       end
     end
@@ -67,15 +77,21 @@ class Player < Chingu::GameObject
 
   # keeps track of which room the player is in
   def set_current_room
-    rooms.each do |r|
+    $map.level_rooms.each do |r|
       if self.bounding_box_collision?(r)
         @cr = r
+      end
+    end
+    $map.hallways.each do |h|
+      if self.bounding_box_collision?(h)
+        @cr = h
       end
     end
   end
 
   def update
     set_current_room
+    #puts cr.label
     @last_x, @last_y = @x, @y
     # player is always in the screen center (300,300)
     dx = $width/2 - $window.mouse_x

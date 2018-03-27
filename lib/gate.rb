@@ -3,40 +3,33 @@
 #---------------------------------------------------------------------
 
 class Gate < Chingu::GameObject
-
-  attr_reader :fakeRoom, :lock
-  attr_accessor :room
+  trait :bounding_box
+  traits :collision_detection, :timer
+  attr_accessor :type, :room, :level_rooms, :switch, :name
 
   def setup
-    @room = options[:room]
-    @lock = false
-    @fakeRoom = Room.create(:x=>room.x, :y=>room.y,:width => room.width/1.5,
-      :height => room.width/1.5, :alpha=>0.0,
-      #:color=>Gosu::Color.argb(0xff_000000), :alpha => 255
-      :image=>Gosu::Image.new("sprites/rooms/floor1/room.png"), :fake=>true)
+    @type = options[:type]
+    @switch = false
+    @name = ""
+    if type == "vertical"
+      @name = "sprites/rooms/floor1/v_gate_mask.png"
+      @image = Gosu::Image.new(name)
+    end
+    if type == "horizontal"
+      @name = "sprites/rooms/floor1/h_gate_mask.png"
+      @image = Gosu::Image.new(name)
+    end
+
   end
 
-  def update
-    # if player is in room, lock gate behind player
-    if $player.first_collision(fakeRoom)
-      lock = true
-    end
-    if lock
-      up
-    end
-    # if current room is cleared destroy gate
-    if room.defeated
-      down
-      fakeRoom.destroy
-      destroy
+  def toggle
+    if @image == nil
+      @image = Gosu::Image.new(name)
+      @switch = true
+    else
+      after(400) { @image = Gosu::Image.new("sprites/rooms/floor1/mask.png") }
+      after(400) { @switch = false }
     end
   end
 
-  def up
-    @image = Gosu::Image.new("sprites/gate.png")
-  end
-
-  def down
-    @image = nil
-  end
 end
