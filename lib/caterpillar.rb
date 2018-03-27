@@ -19,8 +19,19 @@ class Caterpillar < Chingu::GameObject
 
   def update
 
+    $p_bullets.delete_if do |b|
+      if self.bounding_box_collision?(b)
+        destroy
+        b.destroy
+        $player.cr.caterpillars.pop()
+        true
+      end
+    end
+
     if @food_count == 4
       Cocoon.create(:x=>x,:y=>y,:zorder=>ZOrder::ENEMY)
+      $player.cr.caterpillars.pop()
+      $player.cr.cocoons << 1
       destroy
     end
 

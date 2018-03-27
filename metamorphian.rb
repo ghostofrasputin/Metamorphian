@@ -54,9 +54,8 @@ end
 #---------------------------------------------------------------------
 $width = 600
 $height = 600
-$bullets = []
-$cocoon_bullets = []
-$butterfly_bullets = []
+$p_bullets = []
+$e_bullets = []
 $player = nil
 $map = nil
 $sm = SoundManager.new
@@ -100,8 +99,8 @@ class Play < GameState
   def initialize(options = {})
     super
     self.input = { :escape => :exit }
-    #$sm.play_sound("everglades", 0.6, 1.5, true)
-    #$sm.play_sound("synth_melody", 0.5, 1.0, true)
+    $sm.play_sound("everglades", 0.6, 1.5, true)
+    $sm.play_sound("synth_melody", 0.5, 1.0, true)
     self.viewport.lag = 0
     self.viewport.game_area = [0, 0, 6200, 6200]
     $map = Map.new

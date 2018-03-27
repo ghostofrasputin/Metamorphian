@@ -38,7 +38,7 @@ class BulletEmitter
   def at_player(list, loc, speed, frequency, frameCount)
     if frameCount > @bullet_pause+frequency
       angle = target_angle(loc,[$player.x, $player.y])
-      Bullet.create(:x => loc[0], :y =>loc[1],:speed => speed, :angle => angle)
+      list << Bullet.create(:x => loc[0], :y =>loc[1],:speed => speed, :angle => angle)
       @bullet_pause = frameCount
     end
   end
@@ -48,7 +48,7 @@ class BulletEmitter
       $sm.play_sound("laser",0.3,1.0,false)
       # player is always in the screen center (300,300)
       angle = target_angle([$width/2,$height/2],[$window.mouse_x, $window.mouse_y])
-      Bullet.create(:x => loc[0], :y =>loc[1],:speed => speed, :angle => angle)
+      list << Bullet.create(:x => loc[0], :y =>loc[1],:speed => speed, :angle => angle)
       @bullet_pause = frameCount
     end
   end

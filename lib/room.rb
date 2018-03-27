@@ -7,7 +7,7 @@ class Room < Chingu::GameObject
   traits :collision_detection
   attr_reader :defeated, :fake, :lock
   attr_accessor :label, :walls, :gates, :food, :caterpillars, :nymphs, :cocoons,
-                :butterflies, :dragonflies, :boss
+                :butterflies, :dragonflies, :boss, :enemies
 
   def setup
     @lock = false
@@ -17,12 +17,13 @@ class Room < Chingu::GameObject
     @gates = []
     @fake = options[:fake]
     @label = options[:label]
-    @caterpillars = options[:caterpillars]
-    @nymphs = options[:nymphs]
-    @cocoons = options[:cocoons]
-    @butterflies = options[:butterflies]
-    @dragonflies = options[:dragonflies]
+    @caterpillars = options[:caterpillars] || []
+    @nymphs = options[:nymphs] || []
+    @cocoons = options[:cocoons] || []
+    @butterflies = options[:butterflies] || []
+    @dragonflies = options[:dragonflies] || []
     @boss = options[:boss]
+    @enemies = [caterpillars, cocoons, butterflies, dragonflies]
 
     if label == "start" or label == "treasure"
       @defeated = true
@@ -50,14 +51,25 @@ class Room < Chingu::GameObject
   end
 
   def update
+    # lock gates and spawn enemies as player enters the room
     if !defeated and !lock and $player.cr.label == label
-      raise_gates()
+      activate_gates()
       spawn_enemies()
       @lock = true
     end
+
+    # open gates when all enemies are gone
+    if !defeated and lock
+      # puts enemies.inspect # good for debugging current room
+      if !any_enemies?
+        activate_gates()
+        @defeated = true
+      end
+    end
+
   end
 
-  def raise_gates
+  def activate_gates
     gates.each do |g|
       g.toggle()
     end
@@ -74,6 +86,18 @@ class Room < Chingu::GameObject
         )
       end
     end
+  end
+
+  def any_enemies?
+    enemies.each do |e|
+      if !e.nil?
+        if e != []
+          #puts "hi"
+          return true
+        end
+      end
+    end
+    return false
   end
 
 end

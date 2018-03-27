@@ -14,17 +14,24 @@ class Cocoon < Chingu::GameObject
     @delay = 15.0
     @timer = 0.0
     @hits = 0.0
-    @dead = false
-    @life = 5
+    @life = 5.0
     @bullet_emitter = BulletEmitter.new
   end
 
   def update
     frameCount = Gosu.milliseconds/100
 
-    # killed by bullets
-    if hits >= life
-      @dead = true
+    $p_bullets.delete_if do |b|
+      if self.bounding_box_collision?(b)
+        @hits += 1.0
+        b.destroy
+        true
+      end
+    end
+
+    if hits == life
+      $player.cr.cocoons.pop()
+      destroy
     end
 
     if frameCount > @bullet_pause+delay
@@ -33,13 +40,15 @@ class Cocoon < Chingu::GameObject
       # transform into butterfly
         if timer == 4
           Butterfly.create(:x=>x,:y=>y,:zorder=>ZOrder::ENEMY)
+          $player.cr.cocoons.pop()
+          $player.cr.butterflies << 1
           destroy
         end
     end
 
     # fire bullet at player if they're in range
     if (($player.x-x)**2.0+($player.y-y)**2.0)**(0.5) < 400
-      bullet_emitter.at_player([],[x,y],3.0,15.0,frameCount)
+      bullet_emitter.at_player($e_bullets,[x,y],3.0,15.0,frameCount)
     else
 
     end

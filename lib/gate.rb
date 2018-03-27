@@ -23,12 +23,12 @@ class Gate < Chingu::GameObject
   end
 
   def toggle
-    if @image == nil
+    if @switch
       @image = Gosu::Image.new(name)
-      @switch = true
+      @switch = false
     else
       after(400) { @image = Gosu::Image.new("sprites/rooms/floor1/mask.png") }
-      after(400) { @switch = false }
+      @switch = true
     end
   end
 

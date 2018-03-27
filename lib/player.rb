@@ -40,7 +40,7 @@ class Player < Chingu::GameObject
   end
 
   def fire
-    bullet_emitter.at_mouse($bullets, [x,y], 15.0, 2.0, Gosu.milliseconds/100)
+    bullet_emitter.at_mouse($p_bullets, [x,y], 15.0, 2.0, Gosu.milliseconds/100)
   end
 
   def move(x,y)
