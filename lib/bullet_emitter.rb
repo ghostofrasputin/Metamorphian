@@ -87,7 +87,7 @@ class BulletEmitter
     if frameCount > @bullet_pause+frequency
       x = loc[0]
       y = loc[1]
-      Bullet.create(:x=>x, :y=>y, :speed=>speed, :angle=>Gosu.degrees_to_radians(spiral_angles[0]))
+      list << Bullet.create(:x=>x, :y=>y, :speed=>speed, :angle=>Gosu.degrees_to_radians(spiral_angles[0]))
       @spiral_angles[0] += degree_shift % 360
       @bullet_pause = frameCount
     end

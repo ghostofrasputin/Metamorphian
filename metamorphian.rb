@@ -22,6 +22,7 @@ require_relative 'lib\wall'
 require_relative 'lib\hallway'
 require_relative 'lib\player'
 require_relative 'lib\food'
+require_relative 'lib\essence'
 require_relative 'lib\spawner'
 require_relative 'lib\caterpillar'
 require_relative 'lib\nymph'
@@ -30,6 +31,7 @@ require_relative 'lib\butterfly'
 require_relative 'lib\dragonfly'
 require_relative 'lib\room'
 require_relative 'lib\map'
+require_relative 'lib\hud'
 
 #---------------------------------------------------------------------
 # ZOrder Module
@@ -43,6 +45,7 @@ module ZOrder
   ENEMY =      4
   GATE =       4
   PLAYER =     5
+  ESSENCE =    6
   BUTTERFLY =  6
   BULLETS =    7
   UI =         8
@@ -58,6 +61,7 @@ $p_bullets = []
 $e_bullets = []
 $player = nil
 $map = nil
+$hud = nil
 $sm = SoundManager.new
 
 #---------------------------------------------------------------------
@@ -94,15 +98,15 @@ end
 class Play < GameState
 
   trait :viewport
-  attr_reader :spawner
+  attr_reader :spawner, :pause
 
   def initialize(options = {})
     super
-    self.input = { :escape => :exit }
-    $sm.play_sound("everglades", 0.6, 1.5, true)
-    $sm.play_sound("synth_melody", 0.5, 1.0, true)
+    @pause = false
+    self.input = { :escape => :exit, :holding_p => :pause}
+    $sm.play_sound("everglades", 0.1, 1.5, true)
     self.viewport.lag = 0
-    self.viewport.game_area = [0, 0, 6200, 6200]
+    self.viewport.game_area = [0, 0, 6300, 6300]
     $map = Map.new
     $map.generate_floor()
     $player = Player.create(:x => $map.starting_room.x,
@@ -110,11 +114,22 @@ class Play < GameState
                             :zorder => ZOrder::PLAYER,
                             :cr => $map.starting_room
     )
+    $hud = Hud.create(:x => $player.x, :y => $player.y)
   end
 
   def update
     super
     self.viewport.center_around($player)
+  end
+
+  def pause
+    if @pause
+      game_objects.unpause!
+      @pause = false
+    else
+      game_objects.pause!
+      @pause = true
+    end
   end
 
 end

@@ -24,7 +24,7 @@ class Map
     @level_rooms = []
     @hallways = []
     @spacing = 1200
-    @offset = 600
+    @offset = 700
     @map = Array.new(5) { Array.new(5) }
     @rooms = parse(current_floor)
   end

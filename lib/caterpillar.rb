@@ -21,9 +21,10 @@ class Caterpillar < Chingu::GameObject
 
     $p_bullets.delete_if do |b|
       if self.bounding_box_collision?(b)
-        destroy
+        spawn_essence
         b.destroy
         $player.cr.caterpillars.pop()
+        destroy
         true
       end
     end
@@ -67,6 +68,14 @@ class Caterpillar < Chingu::GameObject
         goal_food.destroy
         food.delete(goal_food)
       end
+    end
+  end
+
+  def spawn_essence
+    for i in 1..rand(1..3)
+      Essence.create(:x => rand(x-10..x+10),
+                     :y => rand(y-10..y+10),
+                     :zorder => ZOrder::ESSENCE)
     end
   end
 

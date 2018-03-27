@@ -92,7 +92,6 @@ class Room < Chingu::GameObject
     enemies.each do |e|
       if !e.nil?
         if e != []
-          #puts "hi"
           return true
         end
       end
