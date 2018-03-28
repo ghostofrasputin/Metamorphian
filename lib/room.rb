@@ -7,7 +7,7 @@ class Room < Chingu::GameObject
   traits :collision_detection
   attr_reader :defeated, :fake, :lock, :key, :flag
   attr_accessor :label, :walls, :gates, :food, :caterpillars, :nymphs, :cocoons,
-                :butterflies, :dragonflies, :boss, :enemies
+                :butterflies, :dragonflies, :boss, :enemies, :hallways
 
   def setup
     @lock = false
@@ -15,6 +15,7 @@ class Room < Chingu::GameObject
     @food = []
     @walls = []
     @gates = []
+    @hallways = []
     @fake = options[:fake]
     @key = options[:key]
     @flag = options[:flag]
@@ -53,6 +54,7 @@ class Room < Chingu::GameObject
   end
 
   def update
+
     # lock gates and spawn enemies as player enters the room
     if !defeated and !lock and $player.cr.label == label
       activate_gates()

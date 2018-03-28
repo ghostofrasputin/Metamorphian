@@ -146,10 +146,10 @@ class Map
       end
     end
 
-    set_gates_to_rooms
+    set_gates_hallways_to_rooms
 
     # Debug: print out map
-    print_map
+    #print_map
 
   end
 
@@ -299,12 +299,13 @@ class Map
     end
   end
 
-  def set_gates_to_rooms
+  def set_gates_hallways_to_rooms
     hallways.each do |h|
       h.gates.each do |g|
         level_rooms.each do |r|
           if g.bounding_box_collision?(r)
             r.gates << g
+            r.hallways << h
           end
         end
       end

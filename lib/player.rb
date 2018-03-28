@@ -63,7 +63,7 @@ class Player < Chingu::GameObject
   def wall_collision?
     cr.walls.each do |w|
       flag = true
-      if self.bounding_box_collision?(w) and !gate_collision?
+      if self.bounding_box_collision?(w) and !gate_collision?(self)
         return true
       end
     end
@@ -71,9 +71,9 @@ class Player < Chingu::GameObject
   end
 
   # checks for gate collisions of the current room
-  def gate_collision?
+  def gate_collision?(obj)
     cr.gates.each do |g|
-      if self.bounding_box_collision?(g)
+      if obj.bounding_box_collision?(g)
         return true
       end
     end
@@ -94,6 +94,9 @@ class Player < Chingu::GameObject
     end
   end
 
+  # checks for enemy bullet collisions
+  # destroys bullet, life goes down by one
+  # hud updated accordingly
   def enemy_bullet_collision
     if cr.defeated == false
       $e_bullets.delete_if do |b|
@@ -107,6 +110,9 @@ class Player < Chingu::GameObject
     end
   end
 
+  # E button input
+  # player can press E when they have
+  # 50 essence to spend to gain a half heart
   def essence_to_life
     if not e_pause
       if essence >= new_life
