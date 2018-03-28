@@ -81,7 +81,7 @@ class Map
        i = (cr[1]*spacing)+offset
        j = (cr[0]*spacing)+offset
        if iter < nodes.length-1
-         add_hallway([j,i],[nodes[iter+1][0],nodes[iter+1][1]])
+         add_hallway([cr[0],cr[1]],[nodes[iter+1][0],nodes[iter+1][1]])
        end
        rd = random_room(rooms, false)
        level_rooms << Room.create(
@@ -97,6 +97,7 @@ class Map
          :dragonflies => rd.dragonflies,
          :boss => rd.boss,
          :image => Gosu::Image.new(rd.room_background),
+         :key => [cr[0],cr[1]]
        )
        map[cr[0]][cr[1]] = 'R'
     end
@@ -111,7 +112,7 @@ class Map
               if map[s[0]][s[1]] == 'R' and rooms.length > 0
                 ri = (j*spacing)+offset
                 rj = (i*spacing)+offset
-                add_hallway([rj,ri],[s[0],s[1]])
+                add_hallway([i,j],[s[0],s[1]])
                 rd = random_room(rooms, true)
                 r = Room.create(
                   :x => ri,
@@ -125,7 +126,8 @@ class Map
                   :butterflies => rd.butterflies,
                   :dragonflies => rd.dragonflies,
                   :boss => rd.boss,
-                  :image => Gosu::Image.new(rd.room_background)
+                  :image => Gosu::Image.new(rd.room_background),
+                  :key => [i,j]
                 )
                 level_rooms << r
                 if rd.label == "start"
@@ -152,26 +154,32 @@ class Map
   end
 
   def add_hallway(room1, room2)
-    room1_x = room1[1]
-    room1_y = room1[0]
+    room1_x = (room1[1]*spacing)+offset
+    room1_y = (room1[0]*spacing)+offset
     room2_x = (room2[1]*spacing)+offset
     room2_y = (room2[0]*spacing)+offset
     hall_x = (room1_x+room2_x)/2
     hall_y = (room1_y+room2_y)/2
     if room1_x == room2_x
+      flag = room1_y < room2_y ? "d" : "t"
       gate_info = [[hall_x,hall_y-400/2-16],[hall_x, hall_y+400/2+16]]
       hallways << Hallway.create(:x=>hall_x,
                                  :y=>hall_y,
                                  :zorder=> ZOrder::ROOM,
                                  :type=>"vertical",
-                                 :g => gate_info)
+                                 :g => gate_info,
+                                 :key => [room1[0],room1[1],0],
+                                 :flag => flag)
     else
+      flag = room1_x < room2_x ? "r" : "l"
       gate_info = [[hall_x-400/2-16,hall_y],[hall_x+400/2+16, hall_y]]
       hallways << Hallway.create(:x=>hall_x,
                                  :y=>hall_y,
                                  :zorder=> ZOrder::ROOM,
                                  :type=>"horizontal",
-                                 :g => gate_info)
+                                 :g => gate_info,
+                                 :key => [room1[0],room1[1],0],
+                                 :flag => flag)
     end
   end
 

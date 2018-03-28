@@ -6,13 +6,15 @@ class Hallway < Chingu::GameObject
   trait :bounding_box
   traits :collision_detection
 
-  attr_reader :defeated
+  attr_reader :defeated, :key, :flag
   attr_accessor :type, :walls, :gates, :label, :g
 
   def setup
     @type = options[:type]
     @g = options[:g]
     @label = "hallway"
+    @key = options[:key]
+    @flag = options[:flag]
     @gates = []
     @walls = []
     @defeated = true

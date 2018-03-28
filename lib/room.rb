@@ -5,7 +5,7 @@
 class Room < Chingu::GameObject
   trait :bounding_box
   traits :collision_detection
-  attr_reader :defeated, :fake, :lock
+  attr_reader :defeated, :fake, :lock, :key, :flag
   attr_accessor :label, :walls, :gates, :food, :caterpillars, :nymphs, :cocoons,
                 :butterflies, :dragonflies, :boss, :enemies
 
@@ -16,6 +16,8 @@ class Room < Chingu::GameObject
     @walls = []
     @gates = []
     @fake = options[:fake]
+    @key = options[:key]
+    @flag = options[:flag]
     @label = options[:label]
     @caterpillars = options[:caterpillars] || []
     @nymphs = options[:nymphs] || []
@@ -25,7 +27,7 @@ class Room < Chingu::GameObject
     @boss = options[:boss]
     @enemies = [caterpillars, cocoons, butterflies, dragonflies]
 
-    if label == "start" or label == "treasure"
+    if label == "start" or label == "treasure" or label == "boss"
       @defeated = true
     end
 
