@@ -5,11 +5,11 @@
 class Player < Chingu::GameObject
   trait :bounding_box
   traits :collision_detection
-  attr_reader :bullet_emitter, :new_life, :e_pause
-  attr_accessor :last_x, :last_y, :direction, :cr, :rooms, :life, :essence
+  attr_reader :bullet_emitter, :new_life, :r_pause, :e_pause
+  attr_accessor :last_x, :last_y, :direction, :cr, :rooms, :life, :essence,
+                :interactable, :keys, :items, :speed
 
   def setup
-
     @image = Gosu::Image.new("sprites/player/starfighter.bmp")
     self.factor = 1
     self.input = { [:holding_left, :holding_a] => :holding_left,
@@ -17,13 +17,17 @@ class Player < Chingu::GameObject
                    [:holding_up, :holding_w] => :holding_up,
                    [:holding_down, :holding_s] => :holding_down,
                     :holding_mouse_left => :fire,
-                    :holding_e => :essence_to_life}
-    @speed = 7
+                    :holding_e => :interact,
+                    :holding_r => :essence_to_life}
+    @speed = 6
+    @keys = 2
+    @items = []
     @e_pause = false
     @cr = options[:cr]
     @new_life = 50
     @life = 7 # 3 hearts, 6 lives total
     @essence = 0
+    @interactable = nil
     @last_x, @last_y = @x, @y
     @bullet_emitter = BulletEmitter.new
   end
@@ -55,7 +59,7 @@ class Player < Chingu::GameObject
     end
     @y += y
     if wall_collision?
-     @y = @last_y
+       @y = @last_y
     end
   end
 
@@ -82,14 +86,16 @@ class Player < Chingu::GameObject
 
   # keeps track of which room the player is in
   def set_current_room
-    $map.level_rooms.each do |r|
-      if self.bounding_box_collision?(r)
-        @cr = r
+    if cr.defeated
+      $map.level_rooms.each do |r|
+        if self.bounding_box_collision?(r)
+          @cr = r
+        end
       end
-    end
-    $map.hallways.each do |h|
-      if self.bounding_box_collision?(h)
-        @cr = h
+      $map.hallways.each do |h|
+        if self.bounding_box_collision?(h)
+          @cr = h
+        end
       end
     end
   end
@@ -110,21 +116,34 @@ class Player < Chingu::GameObject
     end
   end
 
-  # E button input
-  # player can press E when they have
+  # R button input
+  # player can press R when they have
   # 50 essence to spend to gain a half heart
   def essence_to_life
-    if not e_pause
+    if not r_pause
       if essence >= new_life
         @essence -= new_life
         @life += 1
-        $hud.set_essence(essence)
         $hud.set_lives(life)
         $sm.play_sound("regain1",1.0,1.0,false)
-        @e_pause = true
+        @r_pause = true
       else
         $sm.play_sound("error",0.5,1.0,false)
-        @e_pause = true
+        @r_pause = true
+      end
+    end
+  end
+
+  # player can interact with objects (chests, etc.)
+  # and friendly NPCs when in range
+  def interact
+    if not e_pause
+      if interactable.is_a?(Chest)
+        if @keys > 0 and interactable.locked
+          interactable.unlock
+          @keys -= 1
+          @e_pause = true
+        end
       end
     end
   end
@@ -132,6 +151,9 @@ class Player < Chingu::GameObject
   def update
     set_current_room
     enemy_bullet_collision
+    if !Gosu.button_down? Gosu::char_to_button_id('R')
+      @r_pause = false
+    end
     if !Gosu.button_down? Gosu::char_to_button_id('E')
       @e_pause = false
     end

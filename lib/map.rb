@@ -135,6 +135,8 @@ class Map
                   @starting_room = r
                 elsif rd.label == "boss"
                   map[i][j] = 'B'
+                elsif rd.label == "treasure"
+                  map[i][j] = 'T'
                 else
                   map[i][j] = 'R'
                 end
@@ -186,7 +188,7 @@ class Map
   def random_room(rooms, flag)
     while true
       r = rooms.sample
-      if r.label != "boss" and r.label != "start" or flag
+      if r.label != "boss" and r.label != "start" and r.label != "treasure" or flag
         rooms.delete(r)
         return r
       end

@@ -20,6 +20,9 @@ require_relative 'lib\bullet_emitter'
 require_relative 'lib\gate'
 require_relative 'lib\wall'
 require_relative 'lib\hallway'
+require_relative 'lib\item'
+require_relative 'lib\speed_boots'
+require_relative 'lib\chest'
 require_relative 'lib\player'
 require_relative 'lib\food'
 require_relative 'lib\essence'
@@ -42,8 +45,10 @@ module ZOrder
   ROOM =       1
   FOOD =       2
   WALL =       3
+  CHEST =      3
   ENEMY =      4
   GATE =       4
+  ITEM =       4
   PLAYER =     5
   ESSENCE =    6
   BUTTERFLY =  6
@@ -63,6 +68,7 @@ $player = nil
 $map = nil
 $hud = nil
 $sm = SoundManager.new
+$item_table = {"boots" => SpeedBoots }
 
 #---------------------------------------------------------------------
 # Game Window Setup

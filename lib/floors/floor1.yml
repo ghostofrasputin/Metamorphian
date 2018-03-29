@@ -85,3 +85,9 @@
     label: boss
     boss: [100,100]
     background: "sprites/rooms/floor1/room.png"
+- 11:
+    label: treasure
+    background: "sprites/rooms/floor1/room.png"
+- 12:
+    label: treasure
+    background: "sprites/rooms/floor1/room.png"

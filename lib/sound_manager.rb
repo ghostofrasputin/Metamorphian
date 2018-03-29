@@ -17,6 +17,7 @@ class SoundManager
     sound_library["laser"] = Gosu::Sample.new("sfx/laser.wav")
     sound_library["error"] = Gosu::Sample.new("sfx/error.wav")
     sound_library["regain1"] = Gosu::Sample.new("sfx/regain1.wav")
+    sound_library["chest_open"] = Gosu::Sample.new("sfx/chest_open.wav")
   end
 
   def play_sound(name, volume, speed, looping)

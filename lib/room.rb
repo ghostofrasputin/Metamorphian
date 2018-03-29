@@ -7,7 +7,7 @@ class Room < Chingu::GameObject
   traits :collision_detection
   attr_reader :defeated, :fake, :lock, :key, :flag
   attr_accessor :label, :walls, :gates, :food, :caterpillars, :nymphs, :cocoons,
-                :butterflies, :dragonflies, :boss, :enemies, :hallways
+                :butterflies, :dragonflies, :boss, :enemies, :hallways, :chests
 
   def setup
     @lock = false
@@ -30,6 +30,10 @@ class Room < Chingu::GameObject
 
     if label == "start" or label == "treasure" or label == "boss"
       @defeated = true
+    end
+
+    if label == "treasure"
+      Chest.create(:x=>x, :y=>y, :zorder=>ZOrder::CHEST, :label=>label)
     end
 
     # generate food randomly for now

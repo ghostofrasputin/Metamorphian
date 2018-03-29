@@ -6,8 +6,9 @@ class Hud < GameObject
 
   attr_reader :heart, :half_heart, :heart_offset, :lives, :heart_spacing,
               :essence_num, :essence_x_offset, :essence_y_offset, :essence_num,
+              :key_x_offset, :key_y_offset, :key_num, :k_font,
               :room, :map_x_offset, :map_y_offset, :room_spacing, :backdrop,
-              :hall, :cr, :ch
+              :hall, :cr, :ch, :boss_room, :treasure_room
 
   def setup
     # heart stuff
@@ -19,17 +20,27 @@ class Hud < GameObject
 
     # essence stuff
     @essence = Gosu::Image.new("sprites/hud/essence.png")
-    @essence_x_offset = 295
+    @essence_x_offset = 255
     @essence_y_offset = 270
     @essence_num = $player.essence
     @e_font = Gosu::Font.new(30)
 
+    # key stuff
+    @key = Gosu::Image.new("sprites/hud/key.png")
+    @key_x_offset = 295
+    @key_y_offset = 270
+    @key_num = $player.keys
+    @k_font = Gosu::Font.new(30)
+
     # mini-map stuff
     @room = Gosu::Image.new("sprites/hud/mini_room.png")
-    @cr = Gosu::Image.new("sprites/hud/current_room.png")
+    @boss_room = Gosu::Image.new("sprites/hud/boss_room.png")
+    @treasure_room = Gosu::Image.new("sprites/hud/treasure_room.png")
     @backdrop = Gosu::Image.new("sprites/hud/backdrop.png")
     @hall = Gosu::Image.new("sprites/hud/mini_hall.png")
     @ch = Gosu::Image.new("sprites/hud/current_hall.png")
+    @cr = [ Gosu::Image.new("sprites/hud/current_room.png"),
+            Gosu::Image.new("sprites/hud/boss_room_current.png") ]
     @map_x_offset = 200
     @map_y_offset = 295
     @room_spacing = 20
@@ -37,6 +48,7 @@ class Hud < GameObject
 
   def draw
     show_lives
+    show_keys
     show_essence
     show_mini_map
   end
@@ -49,7 +61,11 @@ class Hud < GameObject
       x = temp
       row.each_with_index do |col , j|
         if $player.cr.key == [i,j]
-          @cr.draw(x,y,ZOrder::UI)
+          if col == 'B'
+            @cr[1].draw(x,y,ZOrder::UI)
+          else
+            @cr[0].draw(x,y,ZOrder::UI)
+          end
           draw_halls([i,j,0],x,y)
         elsif col == 'R'
           @room.draw(x,y,ZOrder::UI)
@@ -58,12 +74,12 @@ class Hud < GameObject
           @room.draw(x,y,ZOrder::UI)
           draw_halls([i,j,0],x,y)
         elsif col == 'B'
-          @room.draw(x,y,ZOrder::UI)
+          @boss_room.draw(x,y,ZOrder::UI)
           draw_halls([i,j,0],x,y)
-        elsif col == 'W'
-          #print 'W'
+        elsif col == 'T'
+          @treasure_room.draw(x,y,ZOrder::UI)
+          draw_halls([i,j,0],x,y)
         else
-          #print '#'
         end
         x += @room_spacing
       end
@@ -120,9 +136,19 @@ class Hud < GameObject
     @essence.draw($player.x-@essence_x_offset,
                   $player.y-@essence_y_offset,
                   ZOrder::UI)
-    @e_font.draw(essence_num,
+    @e_font.draw($player.essence,
                $player.x-@essence_x_offset+30,
                $player.y-@essence_y_offset-2,
+               ZOrder::UI)
+  end
+
+  def show_keys
+    @key.draw($player.x-@key_x_offset,
+                  $player.y-@key_y_offset,
+                  ZOrder::UI)
+    @k_font.draw($player.keys,
+               $player.x-@key_x_offset+20,
+               $player.y-@key_y_offset-2,
                ZOrder::UI)
   end
 
