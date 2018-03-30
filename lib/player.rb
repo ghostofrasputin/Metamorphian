@@ -49,7 +49,7 @@ class Player < Chingu::GameObject
   end
 
   def fire
-    bullet_emitter.at_mouse($p_bullets, [x,y], 15.0, 2.0, Gosu.milliseconds/100)
+    bullet_emitter.at_mouse($p_bullets, [x,y], 15.0, 4.0, Gosu.milliseconds/100)
   end
 
   def move(x,y)
@@ -151,6 +151,7 @@ class Player < Chingu::GameObject
   def update
     set_current_room
     enemy_bullet_collision
+    #puts cr.enemies.inspect
     if !Gosu.button_down? Gosu::char_to_button_id('R')
       @r_pause = false
     end

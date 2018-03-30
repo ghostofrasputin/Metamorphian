@@ -15,7 +15,7 @@ end
 
 class Map
 
-  attr_reader :rooms, :current_floor, :starting_room, :spacing, :offset
+  attr_reader :rooms, :current_floor, :starting_room, :spacing, :offset, :extra
   attr_accessor :level_rooms, :map, :hallways
 
   def initialize
@@ -23,9 +23,11 @@ class Map
     @starting_room = nil
     @level_rooms = []
     @hallways = []
+    @extra = 0
     @spacing = 1200
     @offset = 700
     @map = Array.new(5) { Array.new(5) }
+
     @rooms = parse(current_floor)
   end
 
@@ -70,7 +72,7 @@ class Map
       # the path is built with
       # enemy rooms so if the path exceeds that
       # than there's no rooms to build the path with
-      if nodes.length > rooms.length - 2
+      if nodes.length > rooms.length - extra
         @map = Array.new(5) { Array.new(5) }
         nodes = []
       end
@@ -188,7 +190,7 @@ class Map
   def random_room(rooms, flag)
     while true
       r = rooms.sample
-      if r.label != "boss" and r.label != "start" and r.label != "treasure" or flag
+      if !is_extra_room?(r.label) or flag
         rooms.delete(r)
         return r
       end
@@ -252,6 +254,9 @@ class Map
         case key
         when "label"
           rd.label = val
+          if is_extra_room?(rd.label)
+            @extra += 1
+          end
         when "enemies"
           val.each do |enemy_type, locations|
             case enemy_type
@@ -299,6 +304,14 @@ class Map
       end
       puts ''
     end
+  end
+
+  # helper method to look for non-enemy rooms
+  def is_extra_room?(label)
+    if label == "start" or label == "boss" or label == "treasure"
+      return true
+    end
+    return false
   end
 
   def set_gates_hallways_to_rooms

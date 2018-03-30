@@ -28,7 +28,7 @@ class Chest < Chingu::GameObject
     @locked = false
     $sm.play_sound("chest_open",1.0,1.0,false)
     @image = Gosu::Image.new("sprites/chest/unlocked_chest.png")
-    $player.items << $item_table[item].create(:x=>x, :y=>y, :label=>label)
+    $item_table[item].create(:x=>x, :y=>y, :label=>label)
   end
 
   def pick_item

@@ -6,7 +6,7 @@ class Hallway < Chingu::GameObject
   trait :bounding_box
   traits :collision_detection
 
-  attr_reader :defeated, :key, :flag
+  attr_reader :defeated, :key, :flag, :enemies
   attr_accessor :type, :walls, :gates, :label, :g
 
   def setup
@@ -17,6 +17,7 @@ class Hallway < Chingu::GameObject
     @flag = options[:flag]
     @gates = []
     @walls = []
+    @enemies = []
     @defeated = true
     if type == "vertical"
       @image = Gosu::Image.new("sprites/rooms/floor1/v_hallway.png")

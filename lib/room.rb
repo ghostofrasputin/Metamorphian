@@ -36,14 +36,6 @@ class Room < Chingu::GameObject
       Chest.create(:x=>x, :y=>y, :zorder=>ZOrder::CHEST, :label=>label)
     end
 
-    # generate food randomly for now
-    for i in 0..20
-       food << Food.create(:x=>rand((x-image.width/2+64)..(x+image.width/2-64)),
-                   :y=>rand((y-image.height/2+64)..(y+image.height/2-64)),
-                   :zorder => ZOrder::FOOD
-       )
-    end
-
     # spawn walls, each room has 4 main walls,
     # plus optional yaml file obstacle walls
     if fake.nil?
@@ -88,10 +80,9 @@ class Room < Chingu::GameObject
     if !caterpillars.nil?
       caterpillars.each do |c|
         Caterpillar.create(:x=>x+c[0],
-                            :y=>y+c[1],
-                            :zorder=>ZOrder::ENEMY,
-                            :food=>food
-        )
+                           :y=>y+c[1],
+                           :zorder=>ZOrder::ENEMY,
+                           :label=>label)
       end
     end
   end

@@ -16,6 +16,7 @@ class Item < Chingu::GameObject
   def update
     if $player.cr.label == label
       if self.bounding_box_collision?($player)
+        $player.items << self
         effect
         destroy
       end

@@ -2,13 +2,7 @@
 # Program: Metamorphian                                              #
 # Author: Jacob Preston                                              #
 #                                                                    #
-# Description: Arcade style fixed-shooter                            #
-#                                                                    #
-# Instructions:                                                      #
-# move back and forth with A and D                                   #
-# shoot by pressing the O button                                     #
-# change bullets with the P button (if possible)                     #
-#                                                                    #
+# Description: Bullet Hell Rogue-Like Game                           #
 #--------------------------------------------------------------------#
 
 require 'chingu'
@@ -27,6 +21,7 @@ require_relative 'lib\player'
 require_relative 'lib\food'
 require_relative 'lib\essence'
 require_relative 'lib\spawner'
+require_relative 'lib\enemy'
 require_relative 'lib\caterpillar'
 require_relative 'lib\nymph'
 require_relative 'lib\cocoon'
@@ -94,6 +89,10 @@ class Metamorphian < Chingu::Window
 
   def needs_cursor?
     false
+  end
+
+  def close
+    close!
   end
 
 end
