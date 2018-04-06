@@ -10,6 +10,7 @@ include Gosu
 include Chingu
 require_relative 'lib\animation'
 require_relative 'lib\sound_manager'
+require_relative 'lib\vector'
 require_relative 'lib\bullet_emitter'
 require_relative 'lib\gate'
 require_relative 'lib\wall'

@@ -78,11 +78,13 @@ class Room < Chingu::GameObject
   def spawn_enemies
     # spawn caterpillars
     if !caterpillars.nil?
-      caterpillars.each do |c|
-        Caterpillar.create(:x=>x+c[0],
-                           :y=>y+c[1],
-                           :zorder=>ZOrder::ENEMY,
-                           :label=>label)
+      lim = caterpillars.length-1
+      for i in 0..lim
+        c = caterpillars[0]
+        caterpillars << Caterpillar.create(:x=>x+c[0],
+                                           :y=>y+c[1],
+                                           :zorder=>ZOrder::ENEMY)
+        caterpillars.shift
       end
     end
   end

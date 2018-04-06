@@ -17,6 +17,12 @@ class Bullet < Chingu::GameObject
   end
 
   def update
+    wall_collision
+    @x += Math.cos(angle)*speed
+    @y += Math.sin(angle)*speed
+  end
+
+  def wall_collision
     # check current rooms wall collisions
     $player.cr.walls.each do |w|
      if self.bounding_box_collision?(w) and !$player.gate_collision?(self)
@@ -39,12 +45,6 @@ class Bullet < Chingu::GameObject
     if Gosu.distance(x,y,$player.x,$player.y) > 500
       die
     end
-
-    # Debug
-    #puts $p_bullets.length
-
-    @x += Math.cos(angle)*speed
-    @y += Math.sin(angle)*speed
   end
 
   def die

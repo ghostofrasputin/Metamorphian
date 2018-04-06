@@ -115,8 +115,8 @@ class BulletEmitter
     if frameCount > @bullet_pause+frequency
       x = loc[0]
       y = loc[1]
-      pos = HelixBullet.new(x, y, speed, angle, true)
-      neg = HelixBullet.new(x, y, speed, angle, false)
+      pos = HelixBullet.create(:x=>x, :y=>y, :speed=>speed, :angle=>angle,:list=>list, :flag=>true)
+      neg = HelixBullet.create(:x=>x, :y=>y, :speed=>speed, :angle=>angle,:list=>list, :flag=>false)
       list << pos << neg
       @bullet_pause = frameCount
     end

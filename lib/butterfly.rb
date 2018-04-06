@@ -17,23 +17,7 @@ class Butterfly < Enemy
     super
     @image = @animation.next()
     death($player.cr.butterflies)
-    bullet_emitter.spiral($e_bullets,[x,y],Gosu.milliseconds/100)
-    move
-  end
-
-  def move
-    if $player.x > x
-      @x += speed
-    end
-    if $player.x < x
-      @x -= speed
-    end
-    if $player.y > y
-      @y += speed
-    end
-    if $player.y < y
-      @y -= speed
-    end
+    bullet_emitter.spiral($e_bullets,[x,y],Gosu.milliseconds/100, 30.0, 3.0)
   end
 
 end

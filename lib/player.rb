@@ -5,7 +5,7 @@
 class Player < Chingu::GameObject
   trait :bounding_box
   traits :collision_detection
-  attr_reader :bullet_emitter, :new_life, :r_pause, :e_pause
+  attr_reader :bullet_emitter, :new_life, :r_pause, :e_pause, :vector
   attr_accessor :last_x, :last_y, :direction, :cr, :rooms, :life, :essence,
                 :interactable, :keys, :items, :speed
 
@@ -20,6 +20,7 @@ class Player < Chingu::GameObject
                     :holding_e => :interact,
                     :holding_r => :essence_to_life}
     @speed = 6
+    @vector = Vector.new(@x, @y)
     @keys = 2
     @items = []
     @e_pause = false
@@ -151,7 +152,6 @@ class Player < Chingu::GameObject
   def update
     set_current_room
     enemy_bullet_collision
-    #puts cr.enemies.inspect
     if !Gosu.button_down? Gosu::char_to_button_id('R')
       @r_pause = false
     end
@@ -164,6 +164,7 @@ class Player < Chingu::GameObject
     dx = $width/2 - $window.mouse_x
     dy = $height/2 - $window.mouse_y
     @angle = -Gosu.radians_to_degrees(Math.atan2(dx, dy))
+    vector.set(x,y)
   end
 
 end
