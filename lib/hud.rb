@@ -4,7 +4,8 @@
 
 class Hud < GameObject
 
-  attr_reader :heart, :half_heart, :heart_offset, :lives, :heart_spacing,
+  attr_reader :heart, :half_heart, :heart_y_offset, :lives, :heart_spacing,
+              :heart_x_offset,
               :essence_num, :essence_x_offset, :essence_y_offset, :essence_num,
               :key_x_offset, :key_y_offset, :key_num, :k_font,
               :room, :map_x_offset, :map_y_offset, :room_spacing, :backdrop,
@@ -16,19 +17,20 @@ class Hud < GameObject
     @half_heart = Gosu::Image.new("sprites/hud/half_heart.png")
     @lives = $player.life
     @heart_spacing = 30
-    @heart_offset = 295
+    @heart_x_offset = $width/2
+    @heart_y_offset = $height/2
 
     # essence stuff
     @essence = Gosu::Image.new("sprites/hud/essence.png")
-    @essence_x_offset = 255
-    @essence_y_offset = 270
+    @essence_x_offset = $width/2
+    @essence_y_offset = ($height/2)-50
     @essence_num = $player.essence
     @e_font = Gosu::Font.new(30)
 
     # key stuff
     @key = Gosu::Image.new("sprites/hud/key.png")
-    @key_x_offset = 295
-    @key_y_offset = 270
+    @key_x_offset = $width/2 - 70
+    @key_y_offset = ($height/2)-50
     @key_num = $player.keys
     @k_font = Gosu::Font.new(30)
 
@@ -41,8 +43,8 @@ class Hud < GameObject
     @ch = Gosu::Image.new("sprites/hud/current_hall.png")
     @cr = [ Gosu::Image.new("sprites/hud/current_room.png"),
             Gosu::Image.new("sprites/hud/boss_room_current.png") ]
-    @map_x_offset = 200
-    @map_y_offset = 295
+    @map_x_offset = $width/2 - 100
+    @map_y_offset = $height/2
     @room_spacing = 20
   end
 
@@ -115,8 +117,8 @@ class Hud < GameObject
 
   def show_lives
     if lives >= 0
-      x = $player.x-@heart_offset
-      y = $player.y-@heart_offset
+      x = $player.x-@heart_x_offset
+      y = $player.y-@heart_y_offset
       if lives.even?
         for i in 1..lives/2
           @heart.draw(x,y,ZOrder::UI)

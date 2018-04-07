@@ -1,5 +1,7 @@
 #---------------------------------------------------------------------
 # Item class
+#   base class for all items
+#   loads all items for the game at the bottom
 #---------------------------------------------------------------------
 
 class Item < Chingu::GameObject
@@ -27,3 +29,5 @@ class Item < Chingu::GameObject
   end
 
 end
+
+require_relative 'items\passive\speed_boots'

@@ -106,14 +106,22 @@ class Player < Chingu::GameObject
   # hud updated accordingly
   def enemy_bullet_collision
     if cr.defeated == false
-      $e_bullets.delete_if do |b|
+      $e_bullets.each do |b|
         if self.bounding_box_collision?(b)
           @life -= 1
           $hud.set_lives(life)
-          b.destroy
-          true
+          clear_all_bullets
         end
       end
+    end
+  end
+
+  def clear_all_bullets
+    # play wave animation here
+    # play sound here
+    $e_bullets.delete_if do |b|
+      b.destroy
+      true
     end
   end
 

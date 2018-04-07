@@ -16,7 +16,6 @@ require_relative 'lib\gate'
 require_relative 'lib\wall'
 require_relative 'lib\hallway'
 require_relative 'lib\item'
-require_relative 'lib\speed_boots'
 require_relative 'lib\chest'
 require_relative 'lib\player'
 require_relative 'lib\food'
@@ -56,13 +55,13 @@ end
 #---------------------------------------------------------------------
 # Global variables and data structures
 #---------------------------------------------------------------------
-$width = 600
-$height = 600
-$p_bullets = []
-$e_bullets = []
+$width = nil
+$height = nil
 $player = nil
 $map = nil
 $hud = nil
+$p_bullets = []
+$e_bullets = []
 $sm = SoundManager.new
 $item_table = {"boots" => SpeedBoots }
 
@@ -71,7 +70,9 @@ $item_table = {"boots" => SpeedBoots }
 #---------------------------------------------------------------------
 class Metamorphian < Chingu::Window
   def initialize()
-    super($width,$height,false)
+    $width = (($window.send :screen_width ) * 1.5).to_i
+    $height = (($window.send :screen_height) * 1.5).to_i
+    super($width,$height,true)
     $window.caption = "Metamorphian"
     @cursor = false
     @cursor = Gosu::Image.new("sprites/crosshairs.png")
@@ -112,7 +113,7 @@ class Play < GameState
     self.input = { :escape => :exit, :holding_p => :pause}
     $sm.play_sound("everglades", 0.1, 1.5, true)
     self.viewport.lag = 0
-    self.viewport.game_area = [0, 0, 6300, 6300]
+    self.viewport.game_area = [0, 0, 6000+$width+$width/2, 6000+$width]
     $map = Map.new
     $map.generate_floor()
     $player = Player.create(:x => $map.starting_room.x,
@@ -136,6 +137,26 @@ class Play < GameState
       game_objects.pause!
       @pause = true
     end
+  end
+
+end
+
+#---------------------------------------------------------------------
+# Start Menu state
+#---------------------------------------------------------------------
+class StartMenu < GameState
+
+  def initialize(options = {})
+    super
+    self.input = {:escape => :exit}
+  end
+
+  def update
+    super
+  end
+
+  def draw
+    super
   end
 
 end

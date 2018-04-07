@@ -95,9 +95,9 @@ class BulletEmitter
   def n_spiral(list, loc, frameCount, degree_shift=10.0, speed=4.0, frequency=0.0)
   end
 
-  def spiral(list, loc, frameCount, degree_shift=10.0, speed=6.0, frequency=1.5)
+  def spiral(list, loc, frameCount, degree_shift=10.0, speed=4.0, frequency=0.0)
     if frameCount > @bullet_pause+frequency
-      $sm.play_sound("spiral",0.1,1.0,false)
+      #$sm.play_sound("spiral",0.1,1.0,false)
       x = loc[0]
       y = loc[1]
       list << Bullet.create(:x=>x, :y=>y, :speed=>speed, :angle=>Gosu.degrees_to_radians(spiral_angles[0]),:list=>list)

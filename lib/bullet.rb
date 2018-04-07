@@ -41,10 +41,6 @@ class Bullet < Chingu::GameObject
       end
     end
 
-    # destroy bullets that go too far
-    if Gosu.distance(x,y,$player.x,$player.y) > 500
-      die
-    end
   end
 
   def die

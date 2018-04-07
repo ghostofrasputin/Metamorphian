@@ -25,7 +25,7 @@ class Map
     @hallways = []
     @extra = 0
     @spacing = 1200
-    @offset = 700
+    @offset = $width
     @map = Array.new(5) { Array.new(5) }
 
     @rooms = parse(current_floor)
