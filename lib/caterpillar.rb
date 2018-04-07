@@ -16,8 +16,7 @@ class Caterpillar < Enemy
     super
     death($player.cr.caterpillars)
     transform(span,Cocoon,$player.cr.cocoons, $player.cr.caterpillars)
-    #bullet_emitter.at_player($e_bullets,[x,y],3.0,15.0,Gosu.milliseconds/100)
-    bullet_emitter.helix($e_bullets,[x,y],Gosu.milliseconds/100)
+    bullet_emitter.spray($e_bullets,[x,y], 3.5, 1.0, Gosu.milliseconds/100)
   end
 
 end

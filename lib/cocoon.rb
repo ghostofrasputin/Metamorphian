@@ -16,12 +16,7 @@ class Cocoon < Enemy
     super
     death($player.cr.cocoons)
     transform(span,Butterfly,$player.cr.butterflies, $player.cr.cocoons)
-    # fire bullet at player if they're in range
-    if Gosu.distance(x,y,$player.x, $player.y) < 400
-      bullet_emitter.at_player($e_bullets,[x,y],3.0,15.0,Gosu.milliseconds/100)
-    else
-
-    end
+    bullet_emitter.circle($e_bullets,[x,y],Gosu.milliseconds/100)
   end
 
 end

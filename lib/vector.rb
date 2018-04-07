@@ -26,19 +26,9 @@ class Vector
     @y += v.y
   end
 
-  def add_by_num(num)
-    @x += num
-    @y += num
-  end
-
   def sub(v)
     @x -= v.x
     @y -= v.y
-  end
-
-  def sub_by_num(num)
-    @x -= num
-    @y -= num
   end
 
   def mult(v)
@@ -46,37 +36,18 @@ class Vector
     @y *= v.y
   end
 
-  def mult_by_num(num)
-    @x *= num
-    @y *= num
-  end
-
   def div(v)
     @x /= v.x
     @y /= v.y
   end
 
-  def div_by_num(num)
-    @x /= num
-    @y /= num
-  end
-
   def scalar(num, sign)
-    if sign == '+'
-      @x += num
-      @y += num
-    elsif sign == '-'
-      @x -= num
-      @y -= num
-    elsif sign == '*'
+    if sign == '*'
       @x *= num
       @y *= num
     elsif sign == '/'
       @x /= num
       @y /= num
-    else
-      puts "wrong usage"
-      exit 1
     end
   end
 

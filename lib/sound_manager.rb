@@ -14,10 +14,13 @@ class SoundManager
     sound_library["everglades"] =  Gosu::Sample.new("music/moonlight-on-the-everglades.wav")
     sound_library["synth_melody"] = Gosu::Sample.new("music/bass-melody.wav")
     # sfx
-    sound_library["laser"] = Gosu::Sample.new("sfx/laser.wav")
+    sound_library["laser"] = Gosu::Sample.new("sfx/laser1.wav")
     sound_library["error"] = Gosu::Sample.new("sfx/error.wav")
     sound_library["regain1"] = Gosu::Sample.new("sfx/regain1.wav")
     sound_library["chest_open"] = Gosu::Sample.new("sfx/chest_open.wav")
+    sound_library["machine_gun"] = Gosu::Sample.new("sfx/zap.wav")
+    sound_library["circle"] = Gosu::Sample.new("sfx/laser2.wav")
+    sound_library["spiral"] = Gosu::Sample.new("sfx/laser3.wav")
   end
 
   def play_sound(name, volume, speed, looping)
