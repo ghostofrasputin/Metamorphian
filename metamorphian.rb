@@ -10,6 +10,7 @@ include Gosu
 include Chingu
 require_relative 'lib\animation'
 require_relative 'lib\sound_manager'
+require_relative 'lib\menu_button'
 require_relative 'lib\vector'
 require_relative 'lib\bullet_emitter'
 require_relative 'lib\gate'
@@ -37,6 +38,7 @@ require_relative 'lib\hud'
 #---------------------------------------------------------------------
 module ZOrder
   BACKGROUND = 0
+  BUTTON =     1
   ROOM =       1
   FOOD =       2
   WALL =       3
@@ -81,7 +83,7 @@ class Metamorphian < Chingu::Window
   def setup
     #retrofy
     #self.factor = 3
-    switch_game_state(Play.new)
+    switch_game_state(StartMenu.new)
   end
 
   def draw
@@ -146,17 +148,38 @@ end
 #---------------------------------------------------------------------
 class StartMenu < GameState
 
+  attr_reader :start, :quit, :logo
+
   def initialize(options = {})
     super
     self.input = {:escape => :exit}
+    offset = 200
+    @start = MenuButton.create(:x=>$width/2,
+                               :y=>$height/2 + offset,
+                               :main => Gosu::Image.new("sprites/buttons/p.png"),
+                               :hover => Gosu::Image.new("sprites/buttons/ph.png"))
+    @quit = MenuButton.create( :x=>$width/2,
+                               :y=>$height/2 + offset + 80,
+                               :main => Gosu::Image.new("sprites/buttons/q.png"),
+                               :hover => Gosu::Image.new("sprites/buttons/qh.png"))
+    # logo by Robert Won
+    @logo = Gosu::Image.new("sprites/logo.png")
   end
 
   def update
     super
+    if start.event?
+      switch_game_state(Play.new)
+    end
+    if quit.event?
+      exit
+    end
   end
 
   def draw
     super
+    fill(Gosu::Color.rgba(0, 0, 0, 255), ZOrder::BACKGROUND)
+    logo.draw_rot($width/2, $height/2-40, ZOrder::UI,0)
   end
 
 end
