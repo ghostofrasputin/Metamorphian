@@ -5,12 +5,13 @@
 class Player < Chingu::GameObject
   trait :bounding_box
   traits :collision_detection
-  attr_reader :bullet_emitter, :new_life, :r_pause, :e_pause, :vector
+  attr_reader :bullet_emitter, :new_life, :r_pause, :e_pause, :vector, :forward
   attr_accessor :last_x, :last_y, :direction, :cr, :rooms, :life, :essence,
                 :interactable, :keys, :items, :speed
 
   def setup
     @image = Gosu::Image.new("sprites/player/starfighter.bmp")
+    @forward = Animation.new("sprites/player/forward.png",75,76)
     self.factor = 1
     self.input = { [:holding_left, :holding_a] => :holding_left,
                    [:holding_right, :holding_d] => :holding_right,
@@ -31,6 +32,25 @@ class Player < Chingu::GameObject
     @interactable = nil
     @last_x, @last_y = @x, @y
     @bullet_emitter = BulletEmitter.new
+  end
+
+  def update
+    #@image = @forward.next
+    set_current_room
+    enemy_bullet_collision
+    if !Gosu.button_down? Gosu::char_to_button_id('R')
+      @r_pause = false
+    end
+    if !Gosu.button_down? Gosu::char_to_button_id('E')
+      @e_pause = false
+    end
+    #puts cr.label
+    @last_x, @last_y = @x, @y
+    # player is always in the screen center (300,300)
+    dx = $width/2 - $window.mouse_x
+    dy = $height/2 - $window.mouse_y
+    @angle = -Gosu.radians_to_degrees(Math.atan2(dx, dy))
+    vector.set(x,y)
   end
 
   def holding_left
@@ -155,24 +175,6 @@ class Player < Chingu::GameObject
         end
       end
     end
-  end
-
-  def update
-    set_current_room
-    enemy_bullet_collision
-    if !Gosu.button_down? Gosu::char_to_button_id('R')
-      @r_pause = false
-    end
-    if !Gosu.button_down? Gosu::char_to_button_id('E')
-      @e_pause = false
-    end
-    #puts cr.label
-    @last_x, @last_y = @x, @y
-    # player is always in the screen center (300,300)
-    dx = $width/2 - $window.mouse_x
-    dy = $height/2 - $window.mouse_y
-    @angle = -Gosu.radians_to_degrees(Math.atan2(dx, dy))
-    vector.set(x,y)
   end
 
 end

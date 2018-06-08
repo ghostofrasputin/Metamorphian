@@ -5,8 +5,8 @@
 class Enemy < Chingu::GameObject
   trait :bounding_box
   traits :collision_detection, :timer
-  attr_reader :speed, :life, :bullet_emitter, :t_flag, :span, :pos, :vel,
-              :acc, :force
+  attr_reader :speed, :life, :bullet_emitter, :t_flag, :rate, :pos, :vel,
+              :acc, :force, :transformable, :meter
 
   def setup
     @pos = Vector.new(@x, @y)
@@ -14,14 +14,17 @@ class Enemy < Chingu::GameObject
     @vel = Vector.new(Math.cos(angle), Math.sin(angle));
     @acc = Vector.new(0,0)
     @force = 0.03
-    @t_flag = true
-    @span = 0.0
+    @t_flag = false
+    @rate = 0.0
+    @transformable = true
+    @meter = Meter.create
     @bullet_emitter = BulletEmitter.new
   end
 
   def update
     hit_by_bullet
     standard_move
+    update_meter
   end
 
   # defines death behavior
@@ -29,6 +32,7 @@ class Enemy < Chingu::GameObject
     if life <= 0
       list.pop()
       spawn_essence
+      @meter.destroy
       destroy
     end
   end
@@ -45,12 +49,10 @@ class Enemy < Chingu::GameObject
   # defines metamorphosis behavior
   def transform(time, object, list1, list2)
     if t_flag
-      after(time) {
-        list1 << object.create(:x=>x,:y=>y,:zorder=>ZOrder::ENEMY)
-        list2.pop()
-        destroy
-      }
-      @t_flag = false
+      list1 << object.create(:x=>x,:y=>y,:zorder=>ZOrder::ENEMY)
+      list2.pop()
+      @meter.destroy
+      destroy
     end
   end
 
@@ -59,10 +61,21 @@ class Enemy < Chingu::GameObject
   def hit_by_bullet
     $p_bullets.delete_if do |b|
       if self.bounding_box_collision?(b)
+        @meter.change_width(b.dmg)
         b.destroy
         during(100) { @color.alpha = 100 }.then { @color.alpha = 255 }
         @life -= 1.0
         true
+      end
+    end
+  end
+
+  def update_meter
+    if @transformable == true
+      @meter.set_rate(rate)
+      @meter.set_xy(@x,@y)
+      if @meter.check_transform == true
+        @t_flag = true
       end
     end
   end

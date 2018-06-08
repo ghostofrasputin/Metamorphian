@@ -24,7 +24,7 @@ class Map
     @level_rooms = []
     @hallways = []
     @extra = 0
-    @spacing = 1200
+    @spacing = 2800 # room size + hallway size
     @offset = $width
     @map = Array.new(5) { Array.new(5) }
 
@@ -166,7 +166,7 @@ class Map
     hall_y = (room1_y+room2_y)/2
     if room1_x == room2_x
       flag = room1_y < room2_y ? "d" : "t"
-      gate_info = [[hall_x,hall_y-400/2-16],[hall_x, hall_y+400/2+16]]
+      gate_info = [[hall_x,hall_y-800/2-16],[hall_x, hall_y+800/2+16]]
       hallways << Hallway.create(:x=>hall_x,
                                  :y=>hall_y,
                                  :zorder=> ZOrder::ROOM,
@@ -176,7 +176,7 @@ class Map
                                  :flag => flag)
     else
       flag = room1_x < room2_x ? "r" : "l"
-      gate_info = [[hall_x-400/2-16,hall_y],[hall_x+400/2+16, hall_y]]
+      gate_info = [[hall_x-800/2-16,hall_y],[hall_x+800/2+16, hall_y]]
       hallways << Hallway.create(:x=>hall_x,
                                  :y=>hall_y,
                                  :zorder=> ZOrder::ROOM,

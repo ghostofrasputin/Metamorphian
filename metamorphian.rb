@@ -12,6 +12,7 @@ require_relative 'lib\animation'
 require_relative 'lib\sound_manager'
 require_relative 'lib\menu_button'
 require_relative 'lib\vector'
+require_relative 'lib\meter'
 require_relative 'lib\bullet_emitter'
 require_relative 'lib\gate'
 require_relative 'lib\wall'
@@ -50,8 +51,9 @@ module ZOrder
   ESSENCE =    6
   BUTTERFLY =  6
   BULLETS =    7
-  UI =         8
-  MOUSE =      9
+  INFO =       8
+  UI =         9
+  MOUSE =      10
 end
 
 #---------------------------------------------------------------------
@@ -72,8 +74,8 @@ $item_table = {"boots" => SpeedBoots }
 #---------------------------------------------------------------------
 class Metamorphian < Chingu::Window
   def initialize()
-    $width = (($window.send :screen_width ) * 1.5).to_i
-    $height = (($window.send :screen_height) * 1.5).to_i
+    $width = (Gosu.screen_width * 1.5).to_i
+    $height = (Gosu.screen_height * 1.5).to_i
     super($width,$height,true)
     $window.caption = "Metamorphian"
     @cursor = false
@@ -115,7 +117,7 @@ class Play < GameState
     self.input = { :escape => :exit, :holding_p => :pause}
     $sm.play_sound("everglades", 0.1, 1.5, true)
     self.viewport.lag = 0
-    self.viewport.game_area = [0, 0, 6000+$width+$width/2, 6000+$width]
+    self.viewport.game_area = [0, 0, 12000+$width+$width/2, 12000+$width]
     $map = Map.new
     $map.generate_floor()
     $player = Player.create(:x => $map.starting_room.x,

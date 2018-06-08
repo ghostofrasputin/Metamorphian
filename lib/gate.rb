@@ -19,7 +19,6 @@ class Gate < Chingu::GameObject
       @name = "sprites/rooms/floor1/h_gate_mask.png"
       @image = Gosu::Image.new(name)
     end
-
   end
 
   def toggle

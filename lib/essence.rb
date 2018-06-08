@@ -10,7 +10,7 @@ class Essence < Chingu::GameObject
 
   def setup
     @image = Gosu::Image.new("sprites/essence.png")
-    @speed = 0.001
+    @speed = 0.0005
   end
 
   def update
@@ -28,7 +28,7 @@ class Essence < Chingu::GameObject
 
   def gravitate_to_player
     if !$player.cr.any_enemies?
-      if (($player.x-x)**2.0+($player.y-y)**2.0)**(0.5) < 400
+      if (($player.x-x)**2.0+($player.y-y)**2.0)**(0.5) < 2000
         if $player.x > x
           @x += speed
         end

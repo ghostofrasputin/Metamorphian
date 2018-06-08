@@ -9,15 +9,16 @@ class Butterfly < Enemy
     super
     @animation = Animation.new("sprites/butterfly/wings_flapping_sprite_sheet.png",150,125)
     @image = @animation.next()
-    @speed = 0.5
+    @speed = 1.0
     @life = 10.0
+    @transformable = false
   end
 
   def update
     super
     @image = @animation.next()
     death($player.cr.butterflies)
-    bullet_emitter.spiral($e_bullets,[x,y],Gosu.milliseconds/100)
+    bullet_emitter.rotation($e_bullets,[x,y],Gosu.milliseconds/100)
   end
 
 end

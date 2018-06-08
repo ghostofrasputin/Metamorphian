@@ -5,13 +5,14 @@
 class Bullet < Chingu::GameObject
   trait :bounding_box
   traits :timer, :collision_detection
-  attr_accessor :speed, :angle, :current_room, :gate_flag, :list
+  attr_accessor :speed, :angle, :current_room, :gate_flag, :list, :dmg
 
   def setup
     @image = Gosu::Image.new("sprites/bullets/bullet.png")
     @speed = options[:speed]
     @angle = options[:angle]
     @list = options[:list]
+    @dmg = 20
     @current_room = nil
     @gate_flag = false
   end

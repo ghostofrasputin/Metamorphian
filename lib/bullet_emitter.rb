@@ -5,6 +5,7 @@
 
 require_relative 'bullet'
 require_relative 'helix_bullet'
+require_relative 'spiral_bullet'
 
 class BulletEmitter
 
@@ -83,19 +84,7 @@ class BulletEmitter
     end
   end
 
-  def rotating_circles(list)
-  end
-
-  def bouncing_circles(list)
-  end
-
-  def flower(list)
-  end
-
-  def n_spiral(list, loc, frameCount, degree_shift=10.0, speed=4.0, frequency=0.0)
-  end
-
-  def spiral(list, loc, frameCount, degree_shift=10.0, speed=4.0, frequency=0.0)
+  def rotation(list, loc, frameCount, degree_shift=10.0, speed=4.0, frequency=0.0)
     if frameCount > @bullet_pause+frequency
       #$sm.play_sound("spiral",0.1,1.0,false)
       x = loc[0]
@@ -106,7 +95,7 @@ class BulletEmitter
     end
   end
 
-  def double_spiral(list, loc, frameCount, degree_shift=10.0, speed=2.0, frequency=1.0)
+  def double_rotation(list, loc, frameCount, degree_shift=10.0, speed=2.0, frequency=1.0)
     if frameCount > @bullet_pause+frequency
       x = loc[0]
       y = loc[1]
@@ -118,10 +107,13 @@ class BulletEmitter
     end
   end
 
-  def slither(list)
-  end
-
-  def snake_game(list)
+  def spiral(list, loc, frameCount, speed=1.0, frequency=2.0)
+    if frameCount > @bullet_pause+frequency
+      x = loc[0]
+      y = loc[1]
+      list << SpiralBullet.create(:x=>x, :y=>y, :speed=>speed, :list=>list)
+      @bullet_pause = frameCount
+    end
   end
 
   def helix(list, loc, frameCount, speed=2.0, angle=-270.0, frequency=0.0)
@@ -133,14 +125,6 @@ class BulletEmitter
       list << pos << neg
       @bullet_pause = frameCount
     end
-  end
-
-  # splits bullets up as they move toward player
-  def binary_split(list)
-  end
-
-  # bounces bullet off the wall once
-  def wall_bounce(list)
   end
 
 end
