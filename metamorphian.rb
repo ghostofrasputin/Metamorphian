@@ -8,30 +8,30 @@
 require 'chingu'
 include Gosu
 include Chingu
-require_relative 'lib\animation'
-require_relative 'lib\sound_manager'
-require_relative 'lib\menu_button'
-require_relative 'lib\vector'
-require_relative 'lib\meter'
-require_relative 'lib\bullet_emitter'
-require_relative 'lib\gate'
-require_relative 'lib\wall'
-require_relative 'lib\hallway'
-require_relative 'lib\item'
-require_relative 'lib\chest'
-require_relative 'lib\player'
-require_relative 'lib\food'
-require_relative 'lib\essence'
-require_relative 'lib\spawner'
-require_relative 'lib\enemy'
-require_relative 'lib\caterpillar'
-require_relative 'lib\nymph'
-require_relative 'lib\cocoon'
-require_relative 'lib\butterfly'
-require_relative 'lib\dragonfly'
-require_relative 'lib\room'
-require_relative 'lib\map'
-require_relative 'lib\hud'
+require_relative 'src\animation'
+require_relative 'src\sound_manager'
+require_relative 'src\menu_button'
+require_relative 'src\vector'
+require_relative 'src\meter'
+require_relative 'src\bullet_emitter'
+require_relative 'src\gate'
+require_relative 'src\wall'
+require_relative 'src\hallway'
+require_relative 'src\item'
+require_relative 'src\chest'
+require_relative 'src\player'
+require_relative 'src\food'
+require_relative 'src\essence'
+require_relative 'src\spawner'
+require_relative 'src\enemy'
+require_relative 'src\caterpillar'
+require_relative 'src\nymph'
+require_relative 'src\cocoon'
+require_relative 'src\butterfly'
+require_relative 'src\dragonfly'
+require_relative 'src\room'
+require_relative 'src\map'
+require_relative 'src\hud'
 
 #---------------------------------------------------------------------
 # ZOrder Module
@@ -48,6 +48,7 @@ module ZOrder
   GATE =       4
   ITEM =       4
   PLAYER =     5
+  GUN =        6
   ESSENCE =    6
   BUTTERFLY =  6
   BULLETS =    7
@@ -85,7 +86,7 @@ class Metamorphian < Chingu::Window
   def setup
     #retrofy
     #self.factor = 3
-    switch_game_state(StartMenu.new)
+    switch_game_state(Play.new)
   end
 
   def draw

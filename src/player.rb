@@ -2,10 +2,13 @@
 # Player class
 #---------------------------------------------------------------------
 
+require_relative 'gun'
+
 class Player < Chingu::GameObject
   trait :bounding_box
   traits :collision_detection
-  attr_reader :bullet_emitter, :new_life, :r_pause, :e_pause, :vector, :forward
+  attr_reader :bullet_emitter, :new_life, :r_pause, :e_pause, :vector, :forward,
+              :guns, :selected_gun
   attr_accessor :last_x, :last_y, :direction, :cr, :rooms, :life, :essence,
                 :interactable, :keys, :items, :speed
 
@@ -19,11 +22,17 @@ class Player < Chingu::GameObject
                    [:holding_down, :holding_s] => :holding_down,
                     :holding_mouse_left => :fire,
                     :holding_e => :interact,
-                    :holding_r => :essence_to_life}
+                    :holding_r => :essence_to_life,
+                    :wheel_down => :weapons_scroll_down,
+                    :wheel_up => :weapons_scroll_up}
     @speed = 6
     @vector = Vector.new(@x, @y)
     @keys = 2
     @items = []
+    @selected_gun = 0
+    @guns = [Gun.create(:x=>x+10, :y=>x, :zorder => ZOrder::UI),
+             AK47.create(:x=>x+10, :y=>x, :zorder => ZOrder::UI)]
+    guns[selected_gun].on         
     @e_pause = false
     @cr = options[:cr]
     @new_life = 50
@@ -70,7 +79,9 @@ class Player < Chingu::GameObject
   end
 
   def fire
-    bullet_emitter.at_mouse($p_bullets, [x,y], 15.0, 4.0, Gosu.milliseconds/100)
+    gun = guns[selected_gun]
+    gun.fire(x,y)
+    #bullet_emitter.at_mouse($p_bullets, [x,y], 15.0, 4.0, Gosu.milliseconds/100)
   end
 
   def move(x,y)
@@ -120,7 +131,27 @@ class Player < Chingu::GameObject
       end
     end
   end
-
+  
+  # scroll through weapons with mousewheel
+  def weapons_scroll_up
+    guns[selected_gun].off
+    @selected_gun -= 1
+    if @selected_gun <= -1
+      @selected_gun = @guns.length-1
+    end
+    guns[selected_gun].on
+  end
+  
+  # scroll through weapons with mousewheel
+  def weapons_scroll_down
+    guns[selected_gun].off
+    @selected_gun += 1
+    if @selected_gun >= @guns.length
+      @selected_gun = 0
+    end
+    guns[selected_gun].on
+  end
+  
   # checks for enemy bullet collisions
   # destroys bullet, life goes down by one
   # hud updated accordingly
